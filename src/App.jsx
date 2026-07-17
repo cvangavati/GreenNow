@@ -1,11 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthProvider, useAuth } from './context/AuthContext'
-import Signup from './pages/Signup'
+import { AuthProvider } from './context/AuthContext'
+import NavBar from './components/NavBar'
+import Bulletin from './pages/Bulletin'
+import EventDetail from './pages/EventDetail'
+import Profile from './pages/Profile'
 import Login from './pages/Login'
-import ProtectedRoute from './components/ProtectedRoute'
+import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
-import Profile from './pages/Profile'
+import ProtectedRoute from './components/ProtectedRoute'
+
 
 function Home() {
   const { user, signOut } = useAuth()
@@ -25,6 +29,12 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={
+          <ProtectedRoute><Bulletin /></ProtectedRoute>
+        } />
+        <Route path="/events/:id" element={
+          <ProtectedRoute><EventDetail /></ProtectedRoute>
+        } />
       <Route path="/profile" element={
           <ProtectedRoute><Profile /></ProtectedRoute>
         } 
