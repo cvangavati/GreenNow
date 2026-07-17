@@ -34,8 +34,8 @@ export default function Signup() {
           <label>Password</label>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Sign Up</button>
+        {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
       </form>
       <p>Already have an account? <Link to="/login">Log in</Link></p>
     </div>
