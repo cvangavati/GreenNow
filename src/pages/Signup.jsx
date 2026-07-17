@@ -14,8 +14,12 @@ export default function Signup() {
     e.preventDefault()
     setError(null)
     const { error } = await signUp(email, password, name)
-    if (error) setError(error.message)
-    else navigate('/')
+    if (error) {
+      console.log('Full error object:', error) // temporary debug
+      setError(error.message || error.error_description || JSON.stringify(error))
+    } else {
+      navigate('/')
+    }
   }
 
   return (
@@ -34,8 +38,8 @@ export default function Signup() {
           <label>Password</label>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
         </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Sign Up</button>
-        {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
       </form>
       <p>Already have an account? <Link to="/login">Log in</Link></p>
     </div>
