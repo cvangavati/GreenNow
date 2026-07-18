@@ -12,6 +12,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import NewEvent from './pages/NewEvent'
 import Feed from './pages/Feed'
 import CreateGroup from './pages/CreateGroup'
+import Groups from './pages/Groups'
+import GroupDetail from './pages/GroupDetail'
 
 function AppLayout() {
   return (
@@ -39,6 +41,12 @@ function AppLayout() {
         } />
         <Route path="/create-group" element={
           <ProtectedRoute><CreateGroup /></ProtectedRoute>
+        } />
+        <Route path="/groups" element={
+          <ProtectedRoute><Groups /></ProtectedRoute>
+        } />
+        <Route path="/groups/:id" element={
+          <ProtectedRoute><GroupDetail /></ProtectedRoute>
         } />
       </Routes>
     </>

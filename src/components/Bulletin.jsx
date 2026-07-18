@@ -2,7 +2,7 @@ export default function Bulletin() {
   return (
     <div style={{ padding: 40 }}>
       <h1>Bulletin Board</h1>
-      <p>Cleanup events will appear here. (Coming in Week 2.)</p>
+      <p>Cleanup events will appear here.</p>
     </div>
   )
 }
