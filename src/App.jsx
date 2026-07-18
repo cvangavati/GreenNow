@@ -10,6 +10,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ProtectedRoute from './components/ProtectedRoute'
 import NewEvent from './pages/NewEvent'
+import Feed from './pages/Feed'
 
 function AppLayout() {
   return (
@@ -31,6 +32,9 @@ function AppLayout() {
         } />
         <Route path="/new-event" element={
           <ProtectedRoute><NewEvent /></ProtectedRoute>
+        } />
+        <Route path="/feed" element={
+          <ProtectedRoute><Feed /></ProtectedRoute>
         } />
       </Routes>
     </>
