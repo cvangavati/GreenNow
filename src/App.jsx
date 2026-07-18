@@ -9,6 +9,7 @@ import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ProtectedRoute from './components/ProtectedRoute'
+import NewEvent from './pages/NewEvent'
 
 function AppLayout() {
   return (
@@ -27,6 +28,9 @@ function AppLayout() {
         } />
         <Route path="/profile" element={
           <ProtectedRoute><Profile /></ProtectedRoute>
+        } />
+        <Route path="/new-event" element={
+          <ProtectedRoute><NewEvent /></ProtectedRoute>
         } />
       </Routes>
     </>

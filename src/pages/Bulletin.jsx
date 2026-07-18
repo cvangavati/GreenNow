@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../services/supabaseClient'
+import { Link } from 'react-router-dom'
 
 export default function Bulletin() {
   const [events, setEvents] = useState([])
@@ -18,6 +19,7 @@ export default function Bulletin() {
   return (
     <div style={{ padding: 40 }}>
       <h1>Bulletin Board</h1>
+      <Link to="/new-event">+ Post a Cleanup Site</Link>
       {loading && <p>Loading events...</p>}
       {!loading && events.length === 0 && <p>No events yet.</p>}
       {events.map(ev => (
