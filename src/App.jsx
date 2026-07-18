@@ -11,6 +11,7 @@ import ResetPassword from './pages/ResetPassword'
 import ProtectedRoute from './components/ProtectedRoute'
 import NewEvent from './pages/NewEvent'
 import Feed from './pages/Feed'
+import CreateGroup from './pages/CreateGroup'
 
 function AppLayout() {
   return (
@@ -35,6 +36,9 @@ function AppLayout() {
         } />
         <Route path="/feed" element={
           <ProtectedRoute><Feed /></ProtectedRoute>
+        } />
+        <Route path="/create-group" element={
+          <ProtectedRoute><CreateGroup /></ProtectedRoute>
         } />
       </Routes>
     </>
