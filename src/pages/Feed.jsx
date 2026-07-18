@@ -97,6 +97,12 @@ function PostCard({ post, currentUserId }) {
       </p>
       <p style={{ margin: '8px 0' }}>{post.content}</p>
 
+      {post.events?.title && (
+        <p style={{ fontSize: '0.8rem', color: '#2d9166', fontWeight: 600 }}>
+          🔗 Linked to event: {post.events.title}
+        </p>
+      )}
+
       {post.photos?.[0] && (
         <img
           src={post.photos[0]}
@@ -140,22 +146,33 @@ function PostCard({ post, currentUserId }) {
 export default function Feed() {
   const { user } = useAuth()
   const [posts, setPosts] = useState([])
+  const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [content, setContent] = useState('')
   const [type, setType] = useState('update')
   const [photoFile, setPhotoFile] = useState(null)
+  const [linkedEventId, setLinkedEventId] = useState('')
   const [posting, setPosting] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     fetchPosts()
+    fetchEvents()
   }, [])
+
+  async function fetchEvents() {
+    const { data } = await supabase
+      .from('events')
+      .select('id, title')
+      .order('created_at', { ascending: false })
+    setEvents(data || [])
+  }
 
   async function fetchPosts() {
     setLoading(true)
     const { data, error } = await supabase
       .from('posts')
-      .select('*, profiles(name)')
+      .select('*, profiles(name), events(title)')
       .order('created_at', { ascending: false })
 
     if (error) console.error('Fetch error:', error)
@@ -194,7 +211,13 @@ export default function Feed() {
 
     const { error } = await supabase
       .from('posts')
-      .insert({ author_id: user.id, type, content: content.trim(), photos: photoUrls })
+      .insert({
+        author_id: user.id,
+        type,
+        content: content.trim(),
+        photos: photoUrls,
+        linked_event_id: linkedEventId || null
+      })
 
     setPosting(false)
 
@@ -205,6 +228,7 @@ export default function Feed() {
 
     setContent('')
     setPhotoFile(null)
+    setLinkedEventId('')
     await fetchPosts()
   }
 
@@ -229,6 +253,12 @@ export default function Feed() {
             accept="image/*"
             onChange={e => setPhotoFile(e.target.files[0])}
           />
+          <select value={linkedEventId} onChange={e => setLinkedEventId(e.target.value)}>
+            <option value="">Not linked to an event</option>
+            {events.map(ev => (
+              <option key={ev.id} value={ev.id}>Link to: {ev.title}</option>
+            ))}
+          </select>
           <button type="submit" disabled={posting}>
             {posting ? 'Posting...' : 'Post'}
           </button>
