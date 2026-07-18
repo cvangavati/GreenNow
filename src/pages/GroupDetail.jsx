@@ -9,6 +9,8 @@ export default function GroupDetail() {
 
   const [group, setGroup] = useState(null)
   const [members, setMembers] = useState([])
+  const [groupEvents, setGroupEvents] = useState([])
+  const [groupPosts, setGroupPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [joinLoading, setJoinLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -37,8 +39,22 @@ export default function GroupDetail() {
       .select('*, profiles(name)')
       .eq('group_id', id)
 
+    const { data: eventsData } = await supabase
+      .from('events')
+      .select('*')
+      .eq('group_id', id)
+      .order('date_time', { ascending: true })
+
+    const { data: postsData } = await supabase
+      .from('posts')
+      .select('*, profiles(name)')
+      .eq('group_id', id)
+      .order('created_at', { ascending: false })
+
     setGroup(groupData)
     setMembers(memberData || [])
+    setGroupEvents(eventsData || [])
+    setGroupPosts(postsData || [])
     setLoading(false)
   }
 
@@ -101,6 +117,28 @@ export default function GroupDetail() {
           <li key={m.id}>{m.profiles?.name || 'Someone'}</li>
         ))}
       </ul>
+
+      <h3 style={{ marginTop: 24 }}>Group Bulletin</h3>
+      {groupEvents.length === 0 && <p style={{ color: '#888' }}>No events posted to this group yet.</p>}
+      {groupEvents.map(ev => (
+        <div key={ev.id} style={{ border: '1px solid #ccc', borderRadius: 8, padding: 10, marginBottom: 10 }}>
+          <Link to={`/events/${ev.id}`}>{ev.title}</Link>
+          <p style={{ margin: '4px 0', fontSize: '0.85rem', color: '#555' }}>
+            📍 {ev.address} &nbsp;·&nbsp; {ev.status}
+          </p>
+        </div>
+      ))}
+
+      <h3 style={{ marginTop: 24 }}>Group Feed</h3>
+      {groupPosts.length === 0 && <p style={{ color: '#888' }}>No posts in this group yet.</p>}
+      {groupPosts.map(p => (
+        <div key={p.id} style={{ border: '1px solid #ccc', borderRadius: 8, padding: 10, marginBottom: 10 }}>
+          <p style={{ fontSize: '0.75rem', color: '#888', margin: '0 0 4px' }}>
+            {p.profiles?.name || 'Someone'} — {new Date(p.created_at).toLocaleString()}
+          </p>
+          <p style={{ margin: 0 }}>{p.content}</p>
+        </div>
+      ))}
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
