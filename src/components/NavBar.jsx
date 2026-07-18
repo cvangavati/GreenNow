@@ -15,6 +15,8 @@ export default function NavBar() {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 10,
       padding: '12px 24px',
       background: '#0f3d2e',
       color: 'white'
@@ -22,12 +24,14 @@ export default function NavBar() {
       <Link to="/" style={{ color: 'white', fontWeight: 'bold', textDecoration: 'none', fontSize: '1.1rem' }}>
         🌊 CleanBeach
       </Link>
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         {user ? (
           <>
             <Link to="/" style={{ color: 'white' }}>Bulletin</Link>
             <Link to="/profile" style={{ color: 'white' }}>Profile</Link>
-            <button onClick={handleSignOut} style={{ cursor: 'pointer' }}>Log Out</button>
+            <button onClick={handleSignOut} style={{ cursor: 'pointer', padding: '8px 14px' }}>
+              Log Out
+            </button>
           </>
         ) : (
           <>

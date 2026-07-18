@@ -109,3 +109,36 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Mobile responsiveness */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+input, select, textarea, button {
+  font-size: 16px; /* prevents iOS auto-zoom on focus */
+}
+
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+  }
+
+  nav > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  form input,
+  form textarea,
+  form select {
+    width: 100%;
+  }
+}

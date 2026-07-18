@@ -57,7 +57,6 @@ export default function Bulletin() {
       }
       setEvents(eventsData)
 
-      // Fetch all RSVPs and count them per event
       const { data: rsvpData, error: rsvpError } = await supabase
         .from('rsvps')
         .select('event_id')
@@ -90,30 +89,46 @@ export default function Bulletin() {
   })
 
   return (
-    <div style={{ padding: 40, maxWidth: 800, margin: '0 auto' }}>
+    <div style={{ padding: '24px 16px', maxWidth: 800, margin: '0 auto' }}>
       <h1>Bulletin Board</h1>
       <p><Link to="/new-event">+ Post a Cleanup Site</Link></p>
 
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
-        <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value)}
+          style={{ flex: '1 1 140px' }}
+        >
           <option value="date">Sort: Soonest date</option>
           <option value="status">Sort: Status</option>
           <option value="urgency">Sort: Urgency</option>
         </select>
 
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          style={{ flex: '1 1 140px' }}
+        >
           {STATUS_OPTIONS.map(s => (
             <option key={s} value={s}>{s === 'all' ? 'All statuses' : s}</option>
           ))}
         </select>
 
-        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+        <select
+          value={typeFilter}
+          onChange={e => setTypeFilter(e.target.value)}
+          style={{ flex: '1 1 140px' }}
+        >
           {TYPE_OPTIONS.map(t => (
             <option key={t} value={t}>{t === 'all' ? 'All types' : t}</option>
           ))}
         </select>
 
-        <select value={urgencyFilter} onChange={e => setUrgencyFilter(e.target.value)}>
+        <select
+          value={urgencyFilter}
+          onChange={e => setUrgencyFilter(e.target.value)}
+          style={{ flex: '1 1 140px' }}
+        >
           {URGENCY_OPTIONS.map(u => (
             <option key={u} value={u}>{u === 'all' ? 'All urgency levels' : u}</option>
           ))}
@@ -124,7 +139,15 @@ export default function Bulletin() {
       {!loading && sorted.length === 0 && <p>No events match these filters yet.</p>}
 
       {sorted.map(ev => (
-        <div key={ev.id} style={{ border: '1px solid #ccc', padding: 14, marginBottom: 14, borderRadius: 10 }}>
+        <div
+          key={ev.id}
+          style={{
+            border: '1px solid #ccc',
+            padding: 14,
+            marginBottom: 14,
+            borderRadius: 10
+          }}
+        >
           <div style={{ marginBottom: 6 }}>
             <Badge label={ev.status.replace('_', ' ')} color={STATUS_COLORS[ev.status]} />
             <Badge label={ev.urgency} color={URGENCY_COLORS[ev.urgency]} />
