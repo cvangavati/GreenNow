@@ -17,6 +17,7 @@ export default function NewEvent() {
   const [type, setType] = useState('beach')
   const [urgency, setUrgency] = useState('medium')
   const [volunteersNeeded, setVolunteersNeeded] = useState(5)
+  const [photoFile, setPhotoFile] = useState(null)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
 
@@ -30,6 +31,30 @@ export default function NewEvent() {
     }
 
     setSaving(true)
+
+    let photoUrls = []
+
+    if (photoFile) {
+      const fileExt = photoFile.name.split('.').pop()
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('event-photos')
+        .upload(filePath, photoFile)
+
+      if (uploadError) {
+        setError('Photo upload failed: ' + uploadError.message)
+        setSaving(false)
+        return
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('event-photos')
+        .getPublicUrl(filePath)
+
+      photoUrls = [urlData.publicUrl]
+    }
+
     const { data, error } = await supabase
       .from('events')
       .insert({
@@ -41,7 +66,8 @@ export default function NewEvent() {
         type,
         urgency,
         created_by: user.id,
-        volunteers_needed: parseInt(volunteersNeeded) || 1
+        volunteers_needed: parseInt(volunteersNeeded) || 1,
+        photos: photoUrls
       })
       .select()
       .single()
@@ -53,7 +79,6 @@ export default function NewEvent() {
       return
     }
 
-    // Log the creation in event_updates for the activity/edit history
     await supabase.from('event_updates').insert({
       event_id: data.id,
       user_id: user.id,
@@ -124,6 +149,15 @@ export default function NewEvent() {
             min="1"
             value={volunteersNeeded}
             onChange={e => setVolunteersNeeded(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label>Photo (optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => setPhotoFile(e.target.files[0])}
           />
         </div>
 
