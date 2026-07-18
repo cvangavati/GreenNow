@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
@@ -18,8 +18,18 @@ export default function NewEvent() {
   const [urgency, setUrgency] = useState('medium')
   const [volunteersNeeded, setVolunteersNeeded] = useState(5)
   const [photoFile, setPhotoFile] = useState(null)
+  const [groups, setGroups] = useState([])
+  const [groupId, setGroupId] = useState('')
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    async function fetchGroups() {
+      const { data } = await supabase.from('groups').select('id, name')
+      setGroups(data || [])
+    }
+    fetchGroups()
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -67,7 +77,8 @@ export default function NewEvent() {
         urgency,
         created_by: user.id,
         volunteers_needed: parseInt(volunteersNeeded) || 1,
-        photos: photoUrls
+        photos: photoUrls,
+        group_id: groupId || null
       })
       .select()
       .single()
@@ -159,6 +170,16 @@ export default function NewEvent() {
             accept="image/*"
             onChange={e => setPhotoFile(e.target.files[0])}
           />
+        </div>
+
+        <div>
+          <label>Post to a group (optional)</label>
+          <select value={groupId} onChange={e => setGroupId(e.target.value)}>
+            <option value="">Not linked to a group</option>
+            {groups.map(g => (
+              <option key={g.id} value={g.id}>{g.name}</option>
+            ))}
+          </select>
         </div>
 
         {error && <p style={{ color: 'red' }}>{error}</p>}

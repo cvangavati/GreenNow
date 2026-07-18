@@ -84,6 +84,17 @@ function PostCard({ post, currentUserId }) {
     await supabase
       .from('post_comments')
       .insert({ post_id: post.id, author_id: currentUserId, content: commentText.trim() })
+
+    // Notify the post author, unless they're commenting on their own post
+    if (post.author_id !== currentUserId) {
+      await supabase.from('notifications').insert({
+        user_id: post.author_id,
+        type: 'comment',
+        message: 'Someone commented on your post.',
+        link: '/feed'
+      })
+    }
+
     setCommentText('')
     await fetchExtras()
     setLoading(false)
@@ -147,18 +158,26 @@ export default function Feed() {
   const { user } = useAuth()
   const [posts, setPosts] = useState([])
   const [events, setEvents] = useState([])
+  const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
   const [content, setContent] = useState('')
   const [type, setType] = useState('update')
   const [photoFile, setPhotoFile] = useState(null)
   const [linkedEventId, setLinkedEventId] = useState('')
+  const [groupId, setGroupId] = useState('')
   const [posting, setPosting] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     fetchPosts()
     fetchEvents()
+    fetchGroups()
   }, [])
+
+  async function fetchGroups() {
+    const { data } = await supabase.from('groups').select('id, name')
+    setGroups(data || [])
+  }
 
   async function fetchEvents() {
     const { data } = await supabase
@@ -209,15 +228,18 @@ export default function Feed() {
       photoUrls = [urlData.publicUrl]
     }
 
-    const { error } = await supabase
+    const { data: newPost, error } = await supabase
       .from('posts')
       .insert({
         author_id: user.id,
         type,
         content: content.trim(),
         photos: photoUrls,
-        linked_event_id: linkedEventId || null
+        linked_event_id: linkedEventId || null,
+        group_id: groupId || null
       })
+      .select()
+      .single()
 
     setPosting(false)
 
@@ -226,9 +248,30 @@ export default function Feed() {
       return
     }
 
+    // Notify other group members, if this post was made in a group
+    if (groupId) {
+      const { data: members } = await supabase
+        .from('group_members')
+        .select('user_id')
+        .eq('group_id', groupId)
+
+      const otherMembers = (members || []).filter(m => m.user_id !== user.id)
+
+      if (otherMembers.length > 0) {
+        const notifications = otherMembers.map(m => ({
+          user_id: m.user_id,
+          type: 'group_post',
+          message: 'New post in a group you follow.',
+          link: `/groups/${groupId}`
+        }))
+        await supabase.from('notifications').insert(notifications)
+      }
+    }
+
     setContent('')
     setPhotoFile(null)
     setLinkedEventId('')
+    setGroupId('')
     await fetchPosts()
   }
 
@@ -257,6 +300,12 @@ export default function Feed() {
             <option value="">Not linked to an event</option>
             {events.map(ev => (
               <option key={ev.id} value={ev.id}>Link to: {ev.title}</option>
+            ))}
+          </select>
+          <select value={groupId} onChange={e => setGroupId(e.target.value)}>
+            <option value="">Not posted to a group</option>
+            {groups.map(g => (
+              <option key={g.id} value={g.id}>Post to: {g.name}</option>
             ))}
           </select>
           <button type="submit" disabled={posting}>
