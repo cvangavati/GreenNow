@@ -17,6 +17,7 @@ export default function Profile() {
   const [createdEvents, setCreatedEvents] = useState([])
   const [attendedEvents, setAttendedEvents] = useState([])
   const [myPosts, setMyPosts] = useState([])
+  const [stats, setStats] = useState({ totalEventsAttended: 0, totalTrashLbs: 0, causesCount: 0, causesList: [] })
 
   useEffect(() => {
     if (user) loadAll()
@@ -48,7 +49,8 @@ export default function Profile() {
       .from('rsvps')
       .select('events(*)')
       .eq('user_id', user.id)
-    setAttendedEvents((rsvps || []).map(r => r.events).filter(Boolean))
+    const attended = (rsvps || []).map(r => r.events).filter(Boolean)
+    setAttendedEvents(attended)
 
     const { data: posts } = await supabase
       .from('posts')
@@ -56,6 +58,24 @@ export default function Profile() {
       .eq('author_id', user.id)
       .order('created_at', { ascending: false })
     setMyPosts(posts || [])
+
+    const totalEventsAttended = attended.length
+    const totalTrashLbs = attended.reduce((sum, ev) => sum + (parseFloat(ev.trash_collected_lbs) || 0), 0)
+      + (created || []).reduce((sum, ev) => {
+          const alreadyCounted = attended.some(a => a.id === ev.id)
+          return alreadyCounted ? sum : sum + (parseFloat(ev.trash_collected_lbs) || 0)
+        }, 0)
+    const causesInvolved = new Set([
+      ...attended.map(ev => ev.type),
+      ...(created || []).map(ev => ev.type)
+    ])
+
+    setStats({
+      totalEventsAttended,
+      totalTrashLbs,
+      causesCount: causesInvolved.size,
+      causesList: Array.from(causesInvolved)
+    })
 
     setLoading(false)
   }
@@ -113,6 +133,28 @@ export default function Profile() {
           {saving ? 'Saving...' : 'Save Profile'}
         </button>
       </form>
+
+      <div style={{
+        marginTop: 32,
+        display: 'flex',
+        gap: 12,
+        flexWrap: 'wrap'
+      }}>
+        <div style={{ flex: '1 1 140px', background: '#f0f8f4', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#2d9166' }}>{stats.totalEventsAttended}</div>
+          <div style={{ fontSize: '0.8rem', color: '#555' }}>Events Attended</div>
+        </div>
+        <div style={{ flex: '1 1 140px', background: '#f0f8f4', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#2d9166' }}>{stats.totalTrashLbs}</div>
+          <div style={{ fontSize: '0.8rem', color: '#555' }}>Lbs Trash Collected</div>
+        </div>
+        <div style={{ flex: '1 1 140px', background: '#f0f8f4', borderRadius: 10, padding: 14, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#2d9166' }}>{stats.causesCount}</div>
+          <div style={{ fontSize: '0.8rem', color: '#555' }}>
+            Causes Supported{stats.causesList.length > 0 && ` (${stats.causesList.join(', ')})`}
+          </div>
+        </div>
+      </div>
 
       <div style={{ marginTop: 32 }}>
         <h3>Events You Created ({createdEvents.length})</h3>
