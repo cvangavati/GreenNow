@@ -53,6 +53,8 @@ export default function EventDetail() {
   const [statusLoading, setStatusLoading] = useState(false)
   const [noteText, setNoteText] = useState('')
   const [noteLoading, setNoteLoading] = useState(false)
+  const [pendingCleanedConfirm, setPendingCleanedConfirm] = useState(false)
+  const [trashLbs, setTrashLbs] = useState('')
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -118,12 +120,23 @@ export default function EventDetail() {
 
   async function changeStatus(newStatus) {
     if (newStatus === event.status) return
+
+    if (newStatus === 'cleaned' && !pendingCleanedConfirm) {
+      setPendingCleanedConfirm(true)
+      return
+    }
+
     setStatusLoading(true)
     setError(null)
 
+    const updatePayload = { status: newStatus, updated_at: new Date().toISOString() }
+    if (newStatus === 'cleaned' && trashLbs) {
+      updatePayload.trash_collected_lbs = parseFloat(trashLbs)
+    }
+
     const { error: updateEventError } = await supabase
       .from('events')
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update(updatePayload)
       .eq('id', id)
 
     if (updateEventError) {
@@ -132,17 +145,23 @@ export default function EventDetail() {
       return
     }
 
+    const noteMessage = newStatus === 'cleaned' && trashLbs
+      ? `Changed status to "${STATUS_LABELS[newStatus]}". Reported ${trashLbs} lbs of trash collected.`
+      : `Changed status to "${STATUS_LABELS[newStatus]}".`
+
     const { error: logError } = await supabase
       .from('event_updates')
       .insert({
         event_id: id,
         user_id: user.id,
         change_type: 'status_change',
-        note: `Changed status to "${STATUS_LABELS[newStatus]}".`
+        note: noteMessage
       })
 
     if (logError) console.error('Log error:', logError)
 
+    setPendingCleanedConfirm(false)
+    setTrashLbs('')
     await fetchData()
     setStatusLoading(false)
   }
@@ -237,6 +256,37 @@ export default function EventDetail() {
             </button>
           ))}
         </div>
+
+        {pendingCleanedConfirm && (
+          <div style={{ margin: '10px 0', padding: 12, background: '#f0f8f4', borderRadius: 8 }}>
+            <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
+              Nice work! How many lbs of trash were collected? (optional)
+            </label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="number"
+                min="0"
+                step="0.1"
+                value={trashLbs}
+                onChange={e => setTrashLbs(e.target.value)}
+                placeholder="e.g. 40"
+                style={{ flex: 1 }}
+              />
+              <button onClick={() => changeStatus('cleaned')} disabled={statusLoading}>
+                {statusLoading ? 'Saving...' : 'Confirm Cleaned'}
+              </button>
+              <button onClick={() => { setPendingCleanedConfirm(false); setTrashLbs('') }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {event.status === 'cleaned' && event.trash_collected_lbs && (
+          <p style={{ color: '#2d9166', fontWeight: 600, fontSize: '0.9rem', marginTop: 10 }}>
+            ♻️ {event.trash_collected_lbs} lbs of trash collected at this site
+          </p>
+        )}
       </div>
 
       <div style={{ marginTop: 24, borderTop: '1px solid #eee', paddingTop: 16 }}>
