@@ -14,6 +14,7 @@ import Feed from './pages/Feed'
 import CreateGroup from './pages/CreateGroup'
 import Groups from './pages/Groups'
 import GroupDetail from './pages/GroupDetail'
+import Leaderboard from './pages/Leaderboard'
 
 function AppLayout() {
   return (
@@ -47,6 +48,9 @@ function AppLayout() {
         } />
         <Route path="/groups/:id" element={
           <ProtectedRoute><GroupDetail /></ProtectedRoute>
+        } />
+        <Route path="/leaderboard" element={
+          <ProtectedRoute><Leaderboard /></ProtectedRoute>
         } />
       </Routes>
     </>

@@ -10,6 +10,7 @@ export default function Profile() {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [causeTags, setCauseTags] = useState([])
+  const [leaderboardOptIn, setLeaderboardOptIn] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
@@ -18,6 +19,7 @@ export default function Profile() {
   const [attendedEvents, setAttendedEvents] = useState([])
   const [myPosts, setMyPosts] = useState([])
   const [stats, setStats] = useState({ totalEventsAttended: 0, totalTrashLbs: 0, causesCount: 0, causesList: [] })
+  const [badges, setBadges] = useState([])
 
   useEffect(() => {
     if (user) loadAll()
@@ -36,6 +38,7 @@ export default function Profile() {
       setName(profileData.name || '')
       setLocation(profileData.location_text || '')
       setCauseTags(profileData.cause_tags || [])
+      setLeaderboardOptIn(profileData.leaderboard_opt_in || false)
     }
 
     const { data: created } = await supabase
@@ -77,6 +80,24 @@ export default function Profile() {
       causesList: Array.from(causesInvolved)
     })
 
+    const earnedBadges = []
+    if (totalEventsAttended >= 1 || (created || []).length >= 1) {
+      earnedBadges.push({ label: 'First Cleanup', icon: '🌱' })
+    }
+    if (totalEventsAttended >= 10) {
+      earnedBadges.push({ label: '10 Events', icon: '🏅' })
+    }
+    if ((created || []).length >= 1) {
+      earnedBadges.push({ label: 'Site Founder', icon: '📍' })
+    }
+    if (causesInvolved.size >= 3) {
+      earnedBadges.push({ label: 'Multi-Cause Champion', icon: '🌍' })
+    }
+    if (totalTrashLbs >= 100) {
+      earnedBadges.push({ label: '100 lbs Club', icon: '♻️' })
+    }
+    setBadges(earnedBadges)
+
     setLoading(false)
   }
 
@@ -92,7 +113,7 @@ export default function Profile() {
     setMessage(null)
     const { error } = await supabase
       .from('profiles')
-      .update({ name, location_text: location, cause_tags: causeTags })
+      .update({ name, location_text: location, cause_tags: causeTags, leaderboard_opt_in: leaderboardOptIn })
       .eq('id', user.id)
 
     setSaving(false)
@@ -128,6 +149,16 @@ export default function Profile() {
             ))}
           </div>
         </div>
+        <div style={{ marginTop: 10 }}>
+          <label>
+            <input
+              type="checkbox"
+              checked={leaderboardOptIn}
+              onChange={e => setLeaderboardOptIn(e.target.checked)}
+            />
+            {' '}Show me on the public leaderboard
+          </label>
+        </div>
         {message && <p>{message}</p>}
         <button type="submit" disabled={saving}>
           {saving ? 'Saving...' : 'Save Profile'}
@@ -155,6 +186,28 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {badges.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <h3>Badges</h3>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {badges.map(b => (
+              <div key={b.label} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                background: '#fff3e0',
+                borderRadius: 20,
+                padding: '6px 14px',
+                fontSize: '0.85rem',
+                fontWeight: 600
+              }}>
+                <span>{b.icon}</span> {b.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ marginTop: 32 }}>
         <h3>Events You Created ({createdEvents.length})</h3>

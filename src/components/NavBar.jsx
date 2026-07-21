@@ -32,6 +32,7 @@ export default function NavBar() {
             <Link to="/feed" style={{ color: 'white' }}>Feed</Link>
             <Link to="/groups" style={{ color: 'white' }}>Groups</Link>
             <Link to="/profile" style={{ color: 'white' }}>Profile</Link>
+            <Link to="/leaderboard" style={{ color: 'white' }}>Leaderboard</Link>
             <NotificationBell />
             <button onClick={handleSignOut} style={{ cursor: 'pointer', padding: '8px 14px' }}>
               Log Out
