@@ -91,7 +91,6 @@ export default function Bulletin() {
   return (
     <div style={{ padding: '24px 16px', maxWidth: 800, margin: '0 auto' }}>
       <h1>Bulletin Board</h1>
-      <p><Link to="/new-event">+ Post a Cleanup Site</Link></p>
       <p>
         <Link to="/new-event">+ Post a Cleanup Site</Link>
         {' '}·{' '}
