@@ -31,6 +31,7 @@ export default function NavBar() {
             <Link to="/" style={{ color: 'white' }}>Bulletin</Link>
             <Link to="/feed" style={{ color: 'white' }}>Feed</Link>
             <Link to="/groups" style={{ color: 'white' }}>Groups</Link>
+            <Link to="/map" style={{ color: 'white' }}>Map</Link>
             <Link to="/profile" style={{ color: 'white' }}>Profile</Link>
             <Link to="/leaderboard" style={{ color: 'white' }}>Leaderboard</Link>
             <NotificationBell />

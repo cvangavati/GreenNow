@@ -15,6 +15,8 @@ import CreateGroup from './pages/CreateGroup'
 import Groups from './pages/Groups'
 import GroupDetail from './pages/GroupDetail'
 import Leaderboard from './pages/Leaderboard'
+import ReportSite from './pages/ReportSite'
+import MapView from './pages/MapView'
 
 function AppLayout() {
   return (
@@ -51,6 +53,12 @@ function AppLayout() {
         } />
         <Route path="/leaderboard" element={
           <ProtectedRoute><Leaderboard /></ProtectedRoute>
+        } />
+        <Route path="/report-site" element={
+          <ProtectedRoute><ReportSite /></ProtectedRoute>
+        } />
+        <Route path="/map" element={
+          <ProtectedRoute><MapView /></ProtectedRoute>
         } />
       </Routes>
     </>
