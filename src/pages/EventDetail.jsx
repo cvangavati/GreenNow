@@ -55,6 +55,9 @@ export default function EventDetail() {
   const [noteLoading, setNoteLoading] = useState(false)
   const [pendingCleanedConfirm, setPendingCleanedConfirm] = useState(false)
   const [trashLbs, setTrashLbs] = useState('')
+  const [pendingAdopt, setPendingAdopt] = useState(false)
+  const [adoptDateTime, setAdoptDateTime] = useState('')
+  const [adoptVolunteers, setAdoptVolunteers] = useState(5)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -83,7 +86,7 @@ export default function EventDetail() {
 
     const { data: updateData, error: updateError } = await supabase
       .from('event_updates')
-      .select('*, profiles(name)')
+      .select('*, profiles(name, role)')
       .eq('event_id', id)
       .order('timestamp', { ascending: false })
 
@@ -116,6 +119,45 @@ export default function EventDetail() {
 
     await fetchData()
     setRsvpLoading(false)
+  }
+
+  async function adoptSite(e) {
+    e.preventDefault()
+    if (!adoptDateTime) {
+      setError('Please pick a date/time to schedule this cleanup.')
+      return
+    }
+    setStatusLoading(true)
+    setError(null)
+
+    const { error: updateError } = await supabase
+      .from('events')
+      .update({
+        status: 'planned',
+        date_time: adoptDateTime,
+        volunteers_needed: parseInt(adoptVolunteers) || 1,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+
+    if (updateError) {
+      setError(updateError.message)
+      setStatusLoading(false)
+      return
+    }
+
+    await supabase.from('event_updates').insert({
+      event_id: id,
+      user_id: user.id,
+      change_type: 'adopted',
+      note: `Adopted this site and scheduled a cleanup for ${new Date(adoptDateTime).toLocaleString()}.`
+    })
+
+    await supabase.from('rsvps').insert({ event_id: id, user_id: user.id, status: 'going' })
+
+    setPendingAdopt(false)
+    await fetchData()
+    setStatusLoading(false)
   }
 
   async function changeStatus(newStatus) {
@@ -205,7 +247,7 @@ export default function EventDetail() {
       <p style={{ color: '#555' }}>{event.description}</p>
 
       <p style={{ fontSize: '0.95rem' }}>
-        📍 {event.address} &nbsp;·&nbsp; 📅 {new Date(event.date_time).toLocaleString()} &nbsp;·&nbsp; {event.type}
+        📍 {event.address} &nbsp;·&nbsp; 📅 {event.date_time ? new Date(event.date_time).toLocaleString() : 'Not yet scheduled'} &nbsp;·&nbsp; {event.type}
       </p>
 
       {event.photos?.[0] && (
@@ -214,6 +256,44 @@ export default function EventDetail() {
           alt={event.title}
           style={{ maxWidth: '100%', borderRadius: 8, margin: '12px 0' }}
         />
+      )}
+
+      {event.status === 'reported' && !event.date_time && (
+        <div style={{ background: '#fff3e0', borderRadius: 8, padding: 14, margin: '16px 0' }}>
+          <p style={{ margin: '0 0 8px', fontWeight: 600 }}>
+            📸 This is an unclaimed report. Adopt it to schedule a real cleanup!
+          </p>
+          {!pendingAdopt ? (
+            <button onClick={() => setPendingAdopt(true)}>Adopt This Site</button>
+          ) : (
+            <form onSubmit={adoptSite} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div>
+                <label style={{ fontSize: '0.85rem' }}>Date &amp; time for cleanup</label>
+                <input
+                  type="datetime-local"
+                  value={adoptDateTime}
+                  onChange={e => setAdoptDateTime(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.85rem' }}>Volunteers needed</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={adoptVolunteers}
+                  onChange={e => setAdoptVolunteers(e.target.value)}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type="submit" disabled={statusLoading}>
+                  {statusLoading ? 'Adopting...' : 'Confirm Adoption'}
+                </button>
+                <button type="button" onClick={() => setPendingAdopt(false)}>Cancel</button>
+              </div>
+            </form>
+          )}
+        </div>
       )}
 
       <div style={{
@@ -311,7 +391,11 @@ export default function EventDetail() {
 
         {updates.map(u => (
           <div key={u.id} style={{ padding: '8px 0', borderBottom: '1px dashed #eee', fontSize: '0.85rem' }}>
-            <strong>{u.profiles?.name || 'Someone'}</strong> — {u.note}
+            <strong>{u.profiles?.name || 'Someone'}</strong>
+            {u.profiles?.role === 'org' && (
+              <span style={{ color: '#3b5fc4', fontSize: '0.75rem', fontWeight: 700 }}> ✓ Verified Org</span>
+            )}
+            {' '}— {u.note}
             <div style={{ color: '#999', fontSize: '0.75rem' }}>
               {new Date(u.timestamp).toLocaleString()}
             </div>
