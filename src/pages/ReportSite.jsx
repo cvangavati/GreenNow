@@ -26,6 +26,13 @@ export default function ReportSite() {
   const [saving, setSaving] = useState(false)
   const [geocoding, setGeocoding] = useState(false)
 
+  const reportIcon = L.divIcon({
+    html: '<div style="font-size: 28px; line-height: 1;">📍</div>',
+    className: 'report-pin-icon',
+    iconSize: [28, 28],
+    iconAnchor: [14, 28]
+  })
+
   useEffect(() => {
     const map = L.map('report-pin-map').setView([37.7749, -122.4194], 4)
     mapRef.current = map
@@ -38,7 +45,7 @@ export default function ReportSite() {
       setLat(e.latlng.lat)
       setLng(e.latlng.lng)
       if (markerRef.current) map.removeLayer(markerRef.current)
-      markerRef.current = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+      markerRef.current = L.marker([e.latlng.lat, e.latlng.lng], { icon: reportIcon }).addTo(map)
     })
 
     return () => map.remove()
@@ -66,7 +73,7 @@ export default function ReportSite() {
           if (mapRef.current) {
             mapRef.current.setView([newLat, newLng], 13)
             if (markerRef.current) mapRef.current.removeLayer(markerRef.current)
-            markerRef.current = L.marker([newLat, newLng]).addTo(mapRef.current)
+            markerRef.current = L.marker([newLat, newLng], { icon: reportIcon }).addTo(mapRef.current)
           }
         }
       } catch (err) {
