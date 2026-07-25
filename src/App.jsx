@@ -17,6 +17,7 @@ import GroupDetail from './pages/GroupDetail'
 import Leaderboard from './pages/Leaderboard'
 import ReportSite from './pages/ReportSite'
 import MapView from './pages/MapView'
+import Gallery from './pages/Gallery'
 
 function AppLayout() {
   return (
@@ -59,6 +60,9 @@ function AppLayout() {
         } />
         <Route path="/map" element={
           <ProtectedRoute><MapView /></ProtectedRoute>
+        } />
+        <Route path="/gallery" element={
+          <ProtectedRoute><Gallery /></ProtectedRoute>
         } />
       </Routes>
     </>
