@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 const TYPE_OPTIONS = ['ocean', 'beach', 'river', 'forest', 'urban', 'roadside']
 const URGENCY_OPTIONS = ['low', 'medium', 'high', 'critical']
@@ -15,8 +17,28 @@ export default function ReportSite() {
   const [type, setType] = useState('beach')
   const [urgency, setUrgency] = useState('medium')
   const [photoFile, setPhotoFile] = useState(null)
+  const [lat, setLat] = useState(null)
+  const [lng, setLng] = useState(null)
+  const markerRef = useRef(null)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    const map = L.map('report-pin-map').setView([37.7749, -122.4194], 4)
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map)
+
+    map.on('click', (e) => {
+      setLat(e.latlng.lat)
+      setLng(e.latlng.lng)
+      if (markerRef.current) map.removeLayer(markerRef.current)
+      markerRef.current = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+    })
+
+    return () => map.remove()
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -64,7 +86,9 @@ export default function ReportSite() {
         urgency,
         created_by: user.id,
         volunteers_needed: 0,
-        photos: photoUrls
+        photos: photoUrls,
+        lat,
+        lng
       })
       .select()
       .single()
@@ -102,6 +126,14 @@ export default function ReportSite() {
             required
             style={{ width: '100%' }}
           />
+        </div>
+
+        <div>
+          <label>Drop a pin on the map (optional but recommended)</label>
+          <div id="report-pin-map" style={{ height: 250, width: '100%', borderRadius: 8, marginBottom: 4 }} />
+          <p style={{ fontSize: '0.75rem', color: '#888' }}>
+            {lat && lng ? `Pin set at ${lat.toFixed(4)}, ${lng.toFixed(4)}` : 'Click the map to drop a pin.'}
+          </p>
         </div>
 
         <div>
