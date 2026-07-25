@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 const TYPE_OPTIONS = ['ocean', 'beach', 'river', 'forest', 'urban', 'roadside']
 const URGENCY_OPTIONS = ['low', 'medium', 'high', 'critical']
@@ -20,6 +22,12 @@ export default function NewEvent() {
   const [photoFile, setPhotoFile] = useState(null)
   const [groups, setGroups] = useState([])
   const [groupId, setGroupId] = useState('')
+  const [lat, setLat] = useState(null)
+  const [lng, setLng] = useState(null)
+  const mapRef = useRef(null)
+  const markerRef = useRef(null)
+  const geocodeTimeout = useRef(null)
+  const [geocoding, setGeocoding] = useState(false)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
 
@@ -30,6 +38,56 @@ export default function NewEvent() {
     }
     fetchGroups()
   }, [])
+
+  useEffect(() => {
+    const map = L.map('pin-map').setView([37.7749, -122.4194], 4)
+    mapRef.current = map
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map)
+
+    map.on('click', (e) => {
+      setLat(e.latlng.lat)
+      setLng(e.latlng.lng)
+      if (markerRef.current) map.removeLayer(markerRef.current)
+      markerRef.current = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map)
+    })
+
+    return () => map.remove()
+  }, [])
+
+  function handleAddressChange(value) {
+    setAddress(value)
+
+    if (geocodeTimeout.current) clearTimeout(geocodeTimeout.current)
+    if (!value.trim() || value.trim().length < 5) return
+
+    geocodeTimeout.current = setTimeout(async () => {
+      setGeocoding(true)
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(value)}`
+        )
+        const results = await res.json()
+        if (results && results[0]) {
+          const newLat = parseFloat(results[0].lat)
+          const newLng = parseFloat(results[0].lon)
+          setLat(newLat)
+          setLng(newLng)
+
+          if (mapRef.current) {
+            mapRef.current.setView([newLat, newLng], 13)
+            if (markerRef.current) mapRef.current.removeLayer(markerRef.current)
+            markerRef.current = L.marker([newLat, newLng]).addTo(mapRef.current)
+          }
+        }
+      } catch (err) {
+        console.error('Geocoding failed:', err)
+      }
+      setGeocoding(false)
+    }, 800)
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -78,7 +136,9 @@ export default function NewEvent() {
         created_by: user.id,
         volunteers_needed: parseInt(volunteersNeeded) || 1,
         photos: photoUrls,
-        group_id: groupId || null
+        group_id: groupId || null,
+        lat,
+        lng
       })
       .select()
       .single()
@@ -123,10 +183,22 @@ export default function NewEvent() {
           <label>Address / Location</label>
           <input
             value={address}
-            onChange={e => setAddress(e.target.value)}
+            onChange={e => handleAddressChange(e.target.value)}
             placeholder="e.g. Ocean Beach, San Francisco, CA"
             required
           />
+        </div>
+
+        <div>
+          <label>Map (auto-locates as you type, or click to set manually)</label>
+          <div id="pin-map" style={{ height: 250, width: '100%', borderRadius: 8, marginBottom: 4 }} />
+          <p style={{ fontSize: '0.75rem', color: '#888' }}>
+            {geocoding
+              ? 'Looking up location...'
+              : lat && lng
+                ? `Pin set at ${lat.toFixed(4)}, ${lng.toFixed(4)}`
+                : 'Type an address above, or click the map to drop a pin.'}
+          </p>
         </div>
 
         <div>
