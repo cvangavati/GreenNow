@@ -55,6 +55,7 @@ export default function EventDetail() {
   const [noteLoading, setNoteLoading] = useState(false)
   const [pendingCleanedConfirm, setPendingCleanedConfirm] = useState(false)
   const [trashLbs, setTrashLbs] = useState('')
+  const [afterPhotoFile, setAfterPhotoFile] = useState(null)
   const [pendingAdopt, setPendingAdopt] = useState(false)
   const [adoptDateTime, setAdoptDateTime] = useState('')
   const [adoptVolunteers, setAdoptVolunteers] = useState(5)
@@ -176,6 +177,27 @@ export default function EventDetail() {
       updatePayload.trash_collected_lbs = parseFloat(trashLbs)
     }
 
+    if (newStatus === 'cleaned' && afterPhotoFile) {
+      const fileExt = afterPhotoFile.name.split('.').pop()
+      const filePath = `${user.id}/after-${Date.now()}.${fileExt}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('event-photos')
+        .upload(filePath, afterPhotoFile)
+
+      if (uploadError) {
+        setError('After-photo upload failed: ' + uploadError.message)
+        setStatusLoading(false)
+        return
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('event-photos')
+        .getPublicUrl(filePath)
+
+      updatePayload.after_photo_url = urlData.publicUrl
+    }
+
     const { error: updateEventError } = await supabase
       .from('events')
       .update(updatePayload)
@@ -204,6 +226,7 @@ export default function EventDetail() {
 
     setPendingCleanedConfirm(false)
     setTrashLbs('')
+    setAfterPhotoFile(null)
     await fetchData()
     setStatusLoading(false)
   }
@@ -342,7 +365,7 @@ export default function EventDetail() {
             <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
               Nice work! How many lbs of trash were collected? (optional)
             </label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <input
                 type="number"
                 min="0"
@@ -352,10 +375,21 @@ export default function EventDetail() {
                 placeholder="e.g. 40"
                 style={{ flex: 1 }}
               />
+            </div>
+            <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
+              Upload an "after" photo (optional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={e => setAfterPhotoFile(e.target.files[0])}
+              style={{ marginBottom: 8 }}
+            />
+            <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={() => changeStatus('cleaned')} disabled={statusLoading}>
                 {statusLoading ? 'Saving...' : 'Confirm Cleaned'}
               </button>
-              <button onClick={() => { setPendingCleanedConfirm(false); setTrashLbs('') }}>
+              <button onClick={() => { setPendingCleanedConfirm(false); setTrashLbs(''); setAfterPhotoFile(null) }}>
                 Cancel
               </button>
             </div>
@@ -366,6 +400,21 @@ export default function EventDetail() {
           <p style={{ color: '#2d9166', fontWeight: 600, fontSize: '0.9rem', marginTop: 10 }}>
             ♻️ {event.trash_collected_lbs} lbs of trash collected at this site
           </p>
+        )}
+
+        {event.status === 'cleaned' && event.after_photo_url && (
+          <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+            {event.photos?.[0] && (
+              <div style={{ flex: '1 1 200px' }}>
+                <p style={{ fontSize: '0.8rem', fontWeight: 600, margin: '0 0 4px' }}>Before</p>
+                <img src={event.photos[0]} alt="Before" style={{ width: '100%', borderRadius: 8 }} />
+              </div>
+            )}
+            <div style={{ flex: '1 1 200px' }}>
+              <p style={{ fontSize: '0.8rem', fontWeight: 600, margin: '0 0 4px' }}>After</p>
+              <img src={event.after_photo_url} alt="After" style={{ width: '100%', borderRadius: 8 }} />
+            </div>
+          </div>
         )}
       </div>
 
