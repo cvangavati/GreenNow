@@ -19,7 +19,7 @@ export default function Login() {
 
   return (
     <div style={{ maxWidth: 400, margin: '40px auto' }}>
-      <h2>Log in to CleanBeach</h2>
+      <h2>Log in to GreenNow</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Email</label>

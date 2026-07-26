@@ -23,7 +23,7 @@ export default function NavBar() {
       color: 'white'
     }}>
       <Link to="/" style={{ color: 'white', fontWeight: 'bold', textDecoration: 'none', fontSize: '1.1rem' }}>
-        🌊 CleanBeach
+        🌱 GreenNow
       </Link>
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         {user ? (
