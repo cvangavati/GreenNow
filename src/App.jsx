@@ -21,6 +21,9 @@ import Gallery from './pages/Gallery'
 import CreateCampaign from './pages/CreateCampaign'
 import Campaigns from './pages/Campaigns'
 import CampaignDetail from './pages/CampaignDetail'
+import GetVerified from './pages/GetVerified'
+import USRepLookup from './pages/USRepLookup'
+import ContactRep from './pages/ContactRep'
 
 function AppLayout() {
   return (
@@ -75,6 +78,15 @@ function AppLayout() {
         } />
         <Route path="/campaigns/:id" element={
           <ProtectedRoute><CampaignDetail /></ProtectedRoute>
+        } />
+        <Route path="/get-verified" element={
+          <ProtectedRoute><GetVerified /></ProtectedRoute>
+        } />
+        <Route path="/find-reps" element={
+          <ProtectedRoute><USRepLookup /></ProtectedRoute>
+        } />
+        <Route path="/campaigns/:id/contact-rep" element={
+          <ProtectedRoute><ContactRep /></ProtectedRoute>
         } />
       </Routes>
     </>

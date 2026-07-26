@@ -41,7 +41,16 @@ export default function Campaigns() {
   return (
     <div style={{ padding: '24px 16px', maxWidth: 700, margin: '0 auto' }}>
       <h1>Advocacy Campaigns</h1>
-      <p><Link to="/create-campaign">+ Create a Campaign</Link></p>
+      <p>
+        <Link to="/create-campaign">+ Create a Campaign</Link>
+      </p>
+      <p>
+        <Link to="/find-reps">📞 Find Your Representatives</Link>
+      </p>
+      <p>
+        <Link to={`/campaigns/${id}/contact-rep`}>📨 Contact Your Representative</Link>
+      </p>
+      
 
       {loading && <p>Loading campaigns...</p>}
       {!loading && campaigns.length === 0 && <p>No campaigns yet.</p>}

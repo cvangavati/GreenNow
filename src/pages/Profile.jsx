@@ -125,6 +125,7 @@ export default function Profile() {
   return (
     <div style={{ maxWidth: 500, margin: '40px auto', padding: '0 16px' }}>
       <h2>Your Profile</h2>
+      <p><Link to="/get-verified">Apply for organization verification</Link></p>
       <form onSubmit={handleSave}>
         <div>
           <label>Name</label>
