@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../services/supabaseClient'
 
+const ONBOARDING_KEY = 'greennow-bulletin-onboarding-seen'
+
 const STATUS_OPTIONS = ['all', 'reported', 'planned', 'in_progress', 'cleaned']
 const TYPE_OPTIONS = ['all', 'ocean', 'beach', 'river', 'forest', 'urban', 'roadside']
 const URGENCY_OPTIONS = ['all', 'low', 'medium', 'high', 'critical']
@@ -46,6 +48,10 @@ export default function Bulletin() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
   const [urgencyFilter, setUrgencyFilter] = useState('all')
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return !window.localStorage.getItem(ONBOARDING_KEY)
+  })
 
   useEffect(() => {
     async function fetchEvents() {
@@ -88,68 +94,129 @@ export default function Bulletin() {
     return 0
   })
 
+  function dismissOnboarding() {
+    setShowOnboarding(false)
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(ONBOARDING_KEY, 'true')
+    }
+  }
+
   return (
-    <div style={{ padding: '24px 16px', maxWidth: 800, margin: '0 auto' }}>
-      <h1>Bulletin Board</h1>
-      <p>
-        <Link to="/new-event">+ Post a Cleanup Site</Link>
-        {' '}·{' '}
-        <Link to="/report-site">📸 Report a Polluted Site</Link>
-      </p>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
-        <select
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-          style={{ flex: '1 1 140px' }}
-        >
-          <option value="date">Sort: Soonest date</option>
-          <option value="status">Sort: Status</option>
-          <option value="urgency">Sort: Urgency</option>
-        </select>
+    <div style={{ padding: '24px 16px', maxWidth: 860, margin: '0 auto' }}>
+      <div style={{
+        border: '1px solid rgba(49, 102, 85, 0.16)',
+        borderRadius: 24,
+        padding: '20px 20px 16px',
+        marginBottom: 20,
+        background: 'linear-gradient(135deg, rgba(145, 200, 172, 0.2), rgba(92, 143, 177, 0.15))',
+        boxShadow: '0 12px 30px rgba(21, 50, 61, 0.08)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <div>
+            <p style={{ marginBottom: 6, fontWeight: 700, color: '#2f6b4d', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.75rem' }}>
+              Welcome to GreenNow
+            </p>
+            <h1 style={{ margin: '0 0 8px', fontSize: 'clamp(1.7rem, 2.5vw, 2.3rem)' }}>Your local cleanup network, in one place.</h1>
+            <p style={{ margin: 0, color: '#49655f', maxWidth: 620, lineHeight: 1.6 }}>
+              Start by joining an active cleanup, reporting a site, or posting a new event so neighbors can help faster.
+            </p>
+          </div>
+          {showOnboarding && (
+            <button
+              type="button"
+              onClick={dismissOnboarding}
+              style={{
+                border: 'none',
+                background: 'rgba(255,255,255,0.75)',
+                padding: '8px 12px',
+                borderRadius: 999,
+                cursor: 'pointer',
+                fontWeight: 600,
+                color: '#2f6b4d'
+              }}
+            >
+              Got it
+            </button>
+          )}
+        </div>
 
-        <select
-          value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
-          style={{ flex: '1 1 140px' }}
-        >
-          {STATUS_OPTIONS.map(s => (
-            <option key={s} value={s}>{s === 'all' ? 'All statuses' : s}</option>
-          ))}
-        </select>
-
-        <select
-          value={typeFilter}
-          onChange={e => setTypeFilter(e.target.value)}
-          style={{ flex: '1 1 140px' }}
-        >
-          {TYPE_OPTIONS.map(t => (
-            <option key={t} value={t}>{t === 'all' ? 'All types' : t}</option>
-          ))}
-        </select>
-
-        <select
-          value={urgencyFilter}
-          onChange={e => setUrgencyFilter(e.target.value)}
-          style={{ flex: '1 1 140px' }}
-        >
-          {URGENCY_OPTIONS.map(u => (
-            <option key={u} value={u}>{u === 'all' ? 'All urgency levels' : u}</option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 16 }}>
+          <Link to="/new-event" style={{ textDecoration: 'none', color: '#183b2c', background: 'white', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
+            + Post a cleanup
+          </Link>
+          <Link to="/report-site" style={{ textDecoration: 'none', color: '#183b2c', background: 'rgba(255,255,255,0.72)', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
+            Report a polluted site
+          </Link>
+        </div>
       </div>
 
-      {loading && <p>Loading events...</p>}
-      {!loading && sorted.length === 0 && <p>No events match these filters yet.</p>}
+      <div className="filter-shell">
+        <div className="filter-field">
+          <label className="filter-label" htmlFor="sort-by">Sort</label>
+          <select id="sort-by" className="filter-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+            <option value="date">Soonest date</option>
+            <option value="status">Status</option>
+            <option value="urgency">Urgency</option>
+          </select>
+        </div>
+
+        <div className="filter-field">
+          <label className="filter-label" htmlFor="status-filter">Status</label>
+          <select id="status-filter" className="filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+            {STATUS_OPTIONS.map(s => (
+              <option key={s} value={s}>{s === 'all' ? 'All statuses' : s}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-field">
+          <label className="filter-label" htmlFor="type-filter">Type</label>
+          <select id="type-filter" className="filter-select" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+            {TYPE_OPTIONS.map(t => (
+              <option key={t} value={t}>{t === 'all' ? 'All types' : t}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-field">
+          <label className="filter-label" htmlFor="urgency-filter">Urgency</label>
+          <select id="urgency-filter" className="filter-select" value={urgencyFilter} onChange={e => setUrgencyFilter(e.target.value)}>
+            {URGENCY_OPTIONS.map(u => (
+              <option key={u} value={u}>{u === 'all' ? 'All urgency levels' : u}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {loading && <p role="status">Loading events...</p>}
+      {!loading && sorted.length === 0 && (
+        <div style={{
+          border: '1px dashed rgba(49, 102, 85, 0.28)',
+          borderRadius: 20,
+          padding: '22px',
+          background: 'rgba(255,255,255,0.72)',
+          color: '#49655f'
+        }}>
+          <h3 style={{ margin: '0 0 8px', color: '#234a38' }}>Nothing here yet — but your first cleanup can start now.</h3>
+          <p style={{ marginBottom: 12 }}>
+            Post a site, report an issue, or browse nearby actions to help your neighborhood take shape.
+          </p>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Link to="/new-event" style={{ textDecoration: 'none', color: '#183b2c', background: 'white', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
+              Create the first event
+            </Link>
+            <Link to="/report-site" style={{ textDecoration: 'none', color: '#183b2c', background: 'rgba(255,255,255,0.82)', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
+              Report a site
+            </Link>
+          </div>
+        </div>
+      )}
 
       {sorted.map(ev => (
         <div
           key={ev.id}
-          style={{
-            border: '1px solid #ccc',
-            padding: 14,
-            marginBottom: 14,
-            borderRadius: 10
-          }}
+          className="page-card"
+          style={{ padding: 14, marginBottom: 14 }}
         >
           <div style={{ marginBottom: 6 }}>
             <Badge label={ev.status.replace('_', ' ')} color={STATUS_COLORS[ev.status]} />
@@ -174,6 +241,8 @@ export default function Bulletin() {
             <img
               src={ev.photos[0]}
               alt={ev.title}
+              loading="lazy"
+              decoding="async"
               style={{ maxWidth: '100%', marginTop: 8, borderRadius: 8 }}
             />
           )}

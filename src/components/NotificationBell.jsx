@@ -10,14 +10,33 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (user) fetchNotifications()
-    const interval = setInterval(() => {
-      if (user) fetchNotifications()
+    if (!user) {
+      setNotifications([])
+      return
+    }
+
+    fetchNotifications()
+    const interval = window.setInterval(() => {
+      fetchNotifications()
     }, 30000)
-    return () => clearInterval(interval)
+
+    return () => window.clearInterval(interval)
   }, [user])
 
+  useEffect(() => {
+    if (!open) return
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open])
+
   async function fetchNotifications() {
+    if (!user) return
+
     const { data } = await supabase
       .from('notifications')
       .select('*')
@@ -40,74 +59,52 @@ export default function NotificationBell() {
   }
 
   async function markAllRead() {
+    if (!user) return
     await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id).eq('is_read', false)
     fetchNotifications()
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <button onClick={() => setOpen(!open)} style={{ position: 'relative', cursor: 'pointer' }}>
-        🔔
+    <div className="notification-shell">
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        className="notification-trigger"
+        aria-label={unreadCount ? `Open notifications, ${unreadCount} unread` : 'Open notifications'}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls="notifications-menu"
+      >
+        <span aria-hidden="true">🔔</span>
         {unreadCount > 0 && (
-          <span style={{
-            position: 'absolute',
-            top: -6,
-            right: -6,
-            background: '#c14848',
-            color: 'white',
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            borderRadius: '50%',
-            width: 18,
-            height: 18,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
+          <span className="notification-badge" aria-label={`${unreadCount} unread notifications`}>
             {unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div style={{
-          position: 'absolute',
-          right: 0,
-          top: '110%',
-          background: 'white',
-          color: 'black',
-          border: '1px solid #ccc',
-          borderRadius: 8,
-          width: 280,
-          maxHeight: 320,
-          overflowY: 'auto',
-          zIndex: 100,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-        }}>
-          <div style={{ padding: 10, borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between' }}>
+        <div id="notifications-menu" className="notification-panel" role="menu" aria-label="Notifications">
+          <div className="notification-panel__header">
             <strong>Notifications</strong>
-            <button onClick={markAllRead} style={{ fontSize: '0.75rem' }}>Mark all read</button>
+            <button type="button" className="notification-action" onClick={markAllRead}>
+              Mark all read
+            </button>
           </div>
           {notifications.length === 0 && (
-            <p style={{ padding: 10, fontSize: '0.85rem', color: '#888' }}>No notifications yet.</p>
+            <p className="notification-empty">No notifications yet.</p>
           )}
           {notifications.map(n => (
-            <div
+            <button
               key={n.id}
+              type="button"
+              className={`notification-item${n.is_read ? '' : ' notification-item--unread'}`}
+              role="menuitem"
               onClick={() => handleClick(n)}
-              style={{
-                padding: 10,
-                fontSize: '0.85rem',
-                borderBottom: '1px solid #f0f0f0',
-                cursor: 'pointer',
-                background: n.is_read ? 'white' : '#f0f8f4'
-              }}
             >
-              {n.message}
-              <div style={{ fontSize: '0.7rem', color: '#999' }}>
-                {new Date(n.created_at).toLocaleString()}
-              </div>
-            </div>
+              <span>{n.message}</span>
+              <span className="notification-item__meta">{new Date(n.created_at).toLocaleString()}</span>
+            </button>
           ))}
         </div>
       )}

@@ -19,7 +19,7 @@ ${campaign.title}
 
 ${campaign.policy_ask}
 
-${campaign.description ? campaign.description + '\n\n' : ''}This matters to me and to many others in our community — as of today, ${campaign.signatureCount || 'a growing number of'} people have signed a petition in support of this cause through CleanBeach, a community environmental platform.
+${campaign.description ? campaign.description + '\n\n' : ''}This matters to me and to many others in our community — as of today, ${campaign.signatureCount || 'a growing number of'} people have signed a petition in support of this cause through GreenNow, a community environmental platform.
 
 I would appreciate the opportunity to discuss this further, and I hope you will consider taking action on this issue.
 

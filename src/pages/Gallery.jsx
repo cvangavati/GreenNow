@@ -30,7 +30,7 @@ export default function Gallery() {
     <div style={{ padding: '24px 16px', maxWidth: 900, margin: '0 auto' }}>
       <h1>Cleanup Gallery</h1>
       <p style={{ color: '#555' }}>
-        Real before-and-after results from the CleanBeach community — {events.length} sites cleaned,{' '}
+        Real before-and-after results from the GreenNow community — {events.length} sites cleaned,{' '}
         {totalLbs} lbs of trash removed so far.
       </p>
 

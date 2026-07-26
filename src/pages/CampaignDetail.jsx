@@ -46,9 +46,9 @@ export default function CampaignDetail() {
 
     // Update page title and OG meta tags for link previews when shared
     if (campaignData) {
-      document.title = `${campaignData.title} — CleanBeach Campaign`
+      document.title = `${campaignData.title} — GreenNow Campaign`
       setMetaTag('property', 'og:title', campaignData.title)
-      setMetaTag('property', 'og:description', campaignData.description || campaignData.policy_ask || 'Sign this environmental campaign on CleanBeach.')
+      setMetaTag('property', 'og:description', campaignData.description || campaignData.policy_ask || 'Sign this environmental campaign on GreenNow.')
       setMetaTag('property', 'og:url', window.location.href)
       setMetaTag('property', 'og:type', 'website')
       setMetaTag('name', 'twitter:card', 'summary')

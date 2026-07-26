@@ -23,6 +23,14 @@
   --shadow: 0 18px 42px rgba(24, 58, 38, 0.12);
   --radius: 22px;
   --radius-sm: 14px;
+  --radius-pill: 999px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
   --font-sans: 'Segoe UI', 'Avenir Next', 'Trebuchet MS', sans-serif;
   --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
 

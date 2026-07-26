@@ -65,68 +65,71 @@ export default function CreateCampaign() {
 
   if (!isEligible) {
     return (
-      <div style={{ maxWidth: 480, margin: '40px auto', padding: '0 16px' }}>
-        <h2>Create a Campaign</h2>
-        <p style={{ color: '#888' }}>
-          Campaign creation is currently limited to verified organizations and admins, to keep advocacy asks
-          credible and coordinated. If you represent an organization and want to launch a campaign, reach out
-          to the CleanBeach team to get your account verified.
-        </p>
+      <div className="auth-shell">
+        <div className="auth-card">
+          <h2>Create a Campaign</h2>
+          <p className="form-help-text">
+            Campaign creation is currently limited to verified organizations and admins, to keep advocacy asks
+            credible and coordinated. If you represent an organization and want to launch a campaign, reach out
+            to the GreenNow team to get your account verified.
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: '40px auto', padding: '0 16px' }}>
-      <h2>Create a Campaign</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Campaign title</label>
-          <input value={title} onChange={e => setTitle(e.target.value)} required style={{ width: '100%' }} />
-        </div>
-        <div>
-          <label>Description</label>
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={4}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <label>Policy ask (what specific change are you requesting?)</label>
-          <textarea
-            value={policyAsk}
-            onChange={e => setPolicyAsk(e.target.value)}
-            rows={3}
-            placeholder="e.g. Ban single-use plastic bags in city limits"
-            required
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <label>Target (who is this aimed at?)</label>
-          <input
-            value={target}
-            onChange={e => setTarget(e.target.value)}
-            placeholder="e.g. City Council, EPA, a specific company"
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <label>Region</label>
-          <input
-            value={region}
-            onChange={e => setRegion(e.target.value)}
-            placeholder="e.g. San Francisco, CA"
-            style={{ width: '100%' }}
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={saving}>
-          {saving ? 'Creating...' : 'Create Campaign'}
-        </button>
-      </form>
+    <div className="auth-shell">
+      <div className="auth-card">
+        <h2>Create a Campaign</h2>
+        <form className="auth-form" onSubmit={handleSubmit} noValidate>
+          <div className="form-field">
+            <label htmlFor="campaign-title">Campaign title</label>
+            <input id="campaign-title" value={title} onChange={e => setTitle(e.target.value)} required />
+          </div>
+          <div className="form-field">
+            <label htmlFor="campaign-description">Description</label>
+            <textarea id="campaign-description" value={description} onChange={e => setDescription(e.target.value)} rows={4} />
+          </div>
+          <div className="form-field">
+            <label htmlFor="campaign-ask">Policy ask (what specific change are you requesting?)</label>
+            <textarea
+              id="campaign-ask"
+              value={policyAsk}
+              onChange={e => setPolicyAsk(e.target.value)}
+              rows={3}
+              placeholder="e.g. Ban single-use plastic bags in city limits"
+              required
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="campaign-target">Target (who is this aimed at?)</label>
+            <input
+              id="campaign-target"
+              value={target}
+              onChange={e => setTarget(e.target.value)}
+              placeholder="e.g. City Council, EPA, a specific company"
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="campaign-region">Region</label>
+            <input
+              id="campaign-region"
+              value={region}
+              onChange={e => setRegion(e.target.value)}
+              placeholder="e.g. San Francisco, CA"
+            />
+          </div>
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button className="form-submit" type="submit" disabled={saving}>
+            {saving ? 'Creating...' : 'Create Campaign'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }
