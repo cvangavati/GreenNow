@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import NotificationBell from './NotificationBell'
 
@@ -12,39 +12,51 @@ export default function NavBar() {
   }
 
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      gap: 10,
-      padding: '12px 24px',
-      background: '#0f3d2e',
-      color: 'white'
-    }}>
-      <Link to="/" style={{ color: 'white', fontWeight: 'bold', textDecoration: 'none', fontSize: '1.1rem' }}>
-        🌱 GreenNow
+    <nav className="site-nav">
+      <Link to="/" className="site-nav__brand">
+        <span className="site-nav__brand-mark">✦</span>
+        <span>GreenNow</span>
       </Link>
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+      <div className="site-nav__links">
         {user ? (
           <>
-            <Link to="/" style={{ color: 'white' }}>Bulletin</Link>
-            <Link to="/feed" style={{ color: 'white' }}>Feed</Link>
-            <Link to="/groups" style={{ color: 'white' }}>Groups</Link>
-            <Link to="/campaigns" style={{ color: 'white' }}>Campaigns</Link>
-            <Link to="/map" style={{ color: 'white' }}>Map</Link>
-            <Link to="/gallery" style={{ color: 'white' }}>Gallery</Link>
-            <Link to="/profile" style={{ color: 'white' }}>Profile</Link>
-            <Link to="/leaderboard" style={{ color: 'white' }}>Leaderboard</Link>
+            <NavLink to="/" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Bulletin
+            </NavLink>
+            <NavLink to="/feed" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Feed
+            </NavLink>
+            <NavLink to="/groups" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Groups
+            </NavLink>
+            <NavLink to="/campaigns" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Campaigns
+            </NavLink>
+            <NavLink to="/map" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Map
+            </NavLink>
+            <NavLink to="/gallery" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Gallery
+            </NavLink>
+            <NavLink to="/profile" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Profile
+            </NavLink>
+            <NavLink to="/leaderboard" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Leaderboard
+            </NavLink>
             <NotificationBell />
-            <button onClick={handleSignOut} style={{ cursor: 'pointer', padding: '8px 14px' }}>
+            <button className="site-nav__button" onClick={handleSignOut}>
               Log Out
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" style={{ color: 'white' }}>Log In</Link>
-            <Link to="/signup" style={{ color: 'white' }}>Sign Up</Link>
+            <NavLink to="/login" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Log In
+            </NavLink>
+            <NavLink to="/signup" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
+              Sign Up
+            </NavLink>
           </>
         )}
       </div>

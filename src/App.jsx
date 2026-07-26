@@ -27,69 +27,71 @@ import ContactRep from './pages/ContactRep'
 
 function AppLayout() {
   return (
-    <>
+    <div className="app-shell">
       <NavBar />
-      <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/" element={
-          <ProtectedRoute><Bulletin /></ProtectedRoute>
-        } />
-        <Route path="/events/:id" element={
-          <ProtectedRoute><EventDetail /></ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute><Profile /></ProtectedRoute>
-        } />
-        <Route path="/new-event" element={
-          <ProtectedRoute><NewEvent /></ProtectedRoute>
-        } />
-        <Route path="/feed" element={
-          <ProtectedRoute><Feed /></ProtectedRoute>
-        } />
-        <Route path="/create-group" element={
-          <ProtectedRoute><CreateGroup /></ProtectedRoute>
-        } />
-        <Route path="/groups" element={
-          <ProtectedRoute><Groups /></ProtectedRoute>
-        } />
-        <Route path="/groups/:id" element={
-          <ProtectedRoute><GroupDetail /></ProtectedRoute>
-        } />
-        <Route path="/leaderboard" element={
-          <ProtectedRoute><Leaderboard /></ProtectedRoute>
-        } />
-        <Route path="/report-site" element={
-          <ProtectedRoute><ReportSite /></ProtectedRoute>
-        } />
-        <Route path="/map" element={
-          <ProtectedRoute><MapView /></ProtectedRoute>
-        } />
-        <Route path="/gallery" element={
-          <ProtectedRoute><Gallery /></ProtectedRoute>
-        } />
-        <Route path="/create-campaign" element={
-          <ProtectedRoute><CreateCampaign /></ProtectedRoute>
-        } />
-        <Route path="/campaigns" element={
-          <ProtectedRoute><Campaigns /></ProtectedRoute>
-        } />
-        <Route path="/campaigns/:id" element={
-          <ProtectedRoute><CampaignDetail /></ProtectedRoute>
-        } />
-        <Route path="/get-verified" element={
-          <ProtectedRoute><GetVerified /></ProtectedRoute>
-        } />
-        <Route path="/find-reps" element={
-          <ProtectedRoute><USRepLookup /></ProtectedRoute>
-        } />
-        <Route path="/campaigns/:id/contact-rep" element={
-          <ProtectedRoute><ContactRep /></ProtectedRoute>
-        } />
-      </Routes>
-    </>
+      <main className="page-shell">
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/" element={
+            <ProtectedRoute><Bulletin /></ProtectedRoute>
+          } />
+          <Route path="/events/:id" element={
+            <ProtectedRoute><EventDetail /></ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute><Profile /></ProtectedRoute>
+          } />
+          <Route path="/new-event" element={
+            <ProtectedRoute><NewEvent /></ProtectedRoute>
+          } />
+          <Route path="/feed" element={
+            <ProtectedRoute><Feed /></ProtectedRoute>
+          } />
+          <Route path="/create-group" element={
+            <ProtectedRoute><CreateGroup /></ProtectedRoute>
+          } />
+          <Route path="/groups" element={
+            <ProtectedRoute><Groups /></ProtectedRoute>
+          } />
+          <Route path="/groups/:id" element={
+            <ProtectedRoute><GroupDetail /></ProtectedRoute>
+          } />
+          <Route path="/leaderboard" element={
+            <ProtectedRoute><Leaderboard /></ProtectedRoute>
+          } />
+          <Route path="/report-site" element={
+            <ProtectedRoute><ReportSite /></ProtectedRoute>
+          } />
+          <Route path="/map" element={
+            <ProtectedRoute><MapView /></ProtectedRoute>
+          } />
+          <Route path="/gallery" element={
+            <ProtectedRoute><Gallery /></ProtectedRoute>
+          } />
+          <Route path="/create-campaign" element={
+            <ProtectedRoute><CreateCampaign /></ProtectedRoute>
+          } />
+          <Route path="/campaigns" element={
+            <ProtectedRoute><Campaigns /></ProtectedRoute>
+          } />
+          <Route path="/campaigns/:id" element={
+            <ProtectedRoute><CampaignDetail /></ProtectedRoute>
+          } />
+          <Route path="/get-verified" element={
+            <ProtectedRoute><GetVerified /></ProtectedRoute>
+          } />
+          <Route path="/find-reps" element={
+            <ProtectedRoute><USRepLookup /></ProtectedRoute>
+          } />
+          <Route path="/campaigns/:id/contact-rep" element={
+            <ProtectedRoute><ContactRep /></ProtectedRoute>
+          } />
+        </Routes>
+      </main>
+    </div>
   )
 }
 
