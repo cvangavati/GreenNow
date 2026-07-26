@@ -8,10 +8,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --bg: oklch(0.97 0.025 118);
-  --bg-strong: oklch(0.94 0.03 122);
-  --surface: oklch(0.995 0.012 118);
-  --surface-2: oklch(0.93 0.036 142);
+  --bg: oklch(0.982 0.02 118);
+  --bg-strong: oklch(0.958 0.026 122);
+  --surface: oklch(0.998 0.008 118);
+  --surface-2: oklch(0.94 0.03 142);
   --text: oklch(0.24 0.02 138);
   --text-muted: oklch(0.39 0.018 140);
   --border: oklch(0.84 0.028 140);
