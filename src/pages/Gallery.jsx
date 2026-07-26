@@ -28,15 +28,15 @@ export default function Gallery() {
 
   return (
     <div style={{ padding: '24px 16px', maxWidth: 900, margin: '0 auto' }}>
-      <h1>Cleanup Gallery</h1>
+      <h1>Impact gallery</h1>
       <p style={{ color: '#555' }}>
-        Real before-and-after results from the GreenNow community — {events.length} sites cleaned,{' '}
-        {totalLbs} lbs of trash removed so far.
+        See the places the GreenNow community has cleaned and the waste that has been removed.{' '}
+        {events.length} sites are featured so far, with {totalLbs} lbs of trash removed.
       </p>
 
-      {loading && <p>Loading gallery...</p>}
+      {loading && <p role="status">Loading recent cleanups…</p>}
       {!loading && events.length === 0 && (
-        <p style={{ color: '#888' }}>No completed cleanups with photos yet — check back soon!</p>
+        <p style={{ color: '#888' }}>No completed cleanups with photos are available yet. Check back soon for progress updates.</p>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>

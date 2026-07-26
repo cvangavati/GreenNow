@@ -79,16 +79,16 @@ export default function GroupDetail() {
     setJoinLoading(false)
   }
 
-  if (loading) return <p style={{ padding: 40 }}>Loading group...</p>
+  if (loading) return <p style={{ padding: 40 }}>Loading group details…</p>
   if (error && !group) return <p style={{ padding: 40, color: 'red' }}>{error}</p>
   if (!group) return null
 
   return (
     <div style={{ maxWidth: 600, margin: '40px auto', padding: '0 16px' }}>
-      <p><Link to="/groups">&larr; Back to Groups</Link></p>
+      <p><Link to="/groups">← Back to groups</Link></p>
 
       <h1>{group.name}</h1>
-      <p style={{ color: '#555' }}>{group.description}</p>
+      <p style={{ color: '#555' }}>{group.description || 'This group is still shaping its purpose. Add a short description to help people understand what it focuses on.'}</p>
       <p style={{ fontSize: '0.9rem' }}>
         {group.region && <>📍 {group.region} &nbsp;·&nbsp;</>}
         {group.cause_focus && <>🌱 {group.cause_focus}</>}
@@ -107,7 +107,7 @@ export default function GroupDetail() {
           👥 {members.length} member{members.length !== 1 ? 's' : ''}
         </span>
         <button onClick={toggleMembership} disabled={joinLoading}>
-          {joinLoading ? 'Updating...' : isMember ? 'Leave Group' : 'Join Group'}
+          {joinLoading ? 'Updating…' : isMember ? 'Leave group' : 'Join this group'}
         </button>
       </div>
 
@@ -118,8 +118,8 @@ export default function GroupDetail() {
         ))}
       </ul>
 
-      <h3 style={{ marginTop: 24 }}>Group Bulletin</h3>
-      {groupEvents.length === 0 && <p style={{ color: '#888' }}>No events posted to this group yet.</p>}
+      <h3 style={{ marginTop: 24 }}>Recent group events</h3>
+      {groupEvents.length === 0 && <p style={{ color: '#888' }}>No events have been posted to this group yet.</p>}
       {groupEvents.map(ev => (
         <div key={ev.id} style={{ border: '1px solid #ccc', borderRadius: 8, padding: 10, marginBottom: 10 }}>
           <Link to={`/events/${ev.id}`}>{ev.title}</Link>
@@ -129,8 +129,8 @@ export default function GroupDetail() {
         </div>
       ))}
 
-      <h3 style={{ marginTop: 24 }}>Group Feed</h3>
-      {groupPosts.length === 0 && <p style={{ color: '#888' }}>No posts in this group yet.</p>}
+      <h3 style={{ marginTop: 24 }}>Recent posts</h3>
+      {groupPosts.length === 0 && <p style={{ color: '#888' }}>No posts yet. Start the conversation with a quick update.</p>}
       {groupPosts.map(p => (
         <div key={p.id} style={{ border: '1px solid #ccc', borderRadius: 8, padding: 10, marginBottom: 10 }}>
           <p style={{ fontSize: '0.75rem', color: '#888', margin: '0 0 4px' }}>

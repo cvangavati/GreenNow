@@ -7,24 +7,40 @@ export default function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
   const { signUp } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
-    const { error } = await signUp(email, password, name)
-    if (error) {
-      setError(error.message || error.error_description || JSON.stringify(error))
-    } else {
-      navigate('/')
+
+    const trimmedName = name.trim()
+    const trimmedEmail = email.trim()
+
+    if (!trimmedName || !trimmedEmail || !password) {
+      setError('Please fill in your name, email, and password before continuing.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await signUp(trimmedEmail, password, trimmedName)
+      if (error) {
+        setError(error.message || error.error_description || JSON.stringify(error))
+      } else {
+        navigate('/')
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <div className="auth-shell">
       <div className="auth-card">
-        <h2>Sign up for GreenNow</h2>
+        <h2>Create your GreenNow account</h2>
+        <p className="form-help-text">Join to plan cleanups, share local issues, and connect with nearby volunteers.</p>
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div className="form-field">
             <label htmlFor="signup-name">Name</label>
@@ -73,10 +89,12 @@ export default function Signup() {
               {error}
             </p>
           )}
-          <button className="form-submit" type="submit">Sign Up</button>
+          <button className="form-submit" type="submit" disabled={loading}>
+            {loading ? 'Creating account…' : 'Create account'}
+          </button>
         </form>
         <div className="auth-links">
-          <span>Already have an account? <Link to="/login">Log in</Link></span>
+          <span>Already have an account? <Link to="/login">Sign in</Link></span>
         </div>
       </div>
     </div>

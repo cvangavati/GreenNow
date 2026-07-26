@@ -17,7 +17,7 @@ export default function CreateGroup() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!name.trim()) {
-      setError('Please give your group a name.')
+      setError('Please add a group name before continuing.')
       return
     }
     setSaving(true)
@@ -49,14 +49,17 @@ export default function CreateGroup() {
 
   return (
     <div style={{ maxWidth: 480, margin: '40px auto', padding: '0 16px' }}>
-      <h2>Create a Group</h2>
+      <h2>Start a neighborhood group</h2>
+      <p style={{ color: '#5b6f69', marginBottom: '1rem' }}>
+        Create a group to organize local action around a shared cause and keep people connected.
+      </p>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Group name</label>
           <input value={name} onChange={e => setName(e.target.value)} required style={{ width: '100%' }} />
         </div>
         <div>
-          <label>Description</label>
+          <label>What is this group for?</label>
           <textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
@@ -65,7 +68,7 @@ export default function CreateGroup() {
           />
         </div>
         <div>
-          <label>Region</label>
+          <label>Area or region</label>
           <input
             value={region}
             onChange={e => setRegion(e.target.value)}
@@ -84,7 +87,7 @@ export default function CreateGroup() {
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit" disabled={saving}>
-          {saving ? 'Creating...' : 'Create Group'}
+          {saving ? 'Creating…' : 'Create group'}
         </button>
       </form>
     </div>

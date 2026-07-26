@@ -253,7 +253,7 @@ export default function EventDetail() {
     setNoteLoading(false)
   }
 
-  if (loading) return <p style={{ padding: 40 }}>Loading event...</p>
+  if (loading) return <p style={{ padding: 40 }}>Loading event details…</p>
   if (error && !event) return <p style={{ padding: 40, color: 'red' }}>{error}</p>
   if (!event) return null
 
@@ -284,14 +284,14 @@ export default function EventDetail() {
       {event.status === 'reported' && !event.date_time && (
         <div style={{ background: '#fff3e0', borderRadius: 8, padding: 14, margin: '16px 0' }}>
           <p style={{ margin: '0 0 8px', fontWeight: 600 }}>
-            📸 This is an unclaimed report. Adopt it to schedule a real cleanup!
+            📸 This report is still unclaimed. Claim it to schedule a cleanup and invite volunteers.
           </p>
           {!pendingAdopt ? (
-            <button onClick={() => setPendingAdopt(true)}>Adopt This Site</button>
+            <button onClick={() => setPendingAdopt(true)}>Claim this site</button>
           ) : (
             <form onSubmit={adoptSite} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div>
-                <label style={{ fontSize: '0.85rem' }}>Date &amp; time for cleanup</label>
+                <label style={{ fontSize: '0.85rem' }}>When should this cleanup happen?</label>
                 <input
                   type="datetime-local"
                   value={adoptDateTime}
@@ -300,7 +300,7 @@ export default function EventDetail() {
                 />
               </div>
               <div>
-                <label style={{ fontSize: '0.85rem' }}>Volunteers needed</label>
+                <label style={{ fontSize: '0.85rem' }}>How many volunteers do you need?</label>
                 <input
                   type="number"
                   min="1"
@@ -310,7 +310,7 @@ export default function EventDetail() {
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="submit" disabled={statusLoading}>
-                  {statusLoading ? 'Adopting...' : 'Confirm Adoption'}
+                  {statusLoading ? 'Scheduling…' : 'Confirm schedule'}
                 </button>
                 <button type="button" onClick={() => setPendingAdopt(false)}>Cancel</button>
               </div>
@@ -332,13 +332,13 @@ export default function EventDetail() {
           {rsvps.length}/{event.volunteers_needed} volunteers signed up
         </span>
         <button onClick={toggleRsvp} disabled={rsvpLoading}>
-          {rsvpLoading ? 'Updating...' : isGoing ? "Cancel RSVP" : "I'm Going"}
+          {rsvpLoading ? 'Updating…' : isGoing ? 'Cancel RSVP' : 'Join this cleanup'}
         </button>
       </div>
 
       <div style={{ margin: '20px 0' }}>
         <label style={{ fontWeight: 600, fontSize: '0.9rem', display: 'block', marginBottom: 6 }}>
-          Status (anyone can update)
+          Update the cleanup status
         </label>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {STATUS_OPTIONS.map(s => (
@@ -363,7 +363,7 @@ export default function EventDetail() {
         {pendingCleanedConfirm && (
           <div style={{ margin: '10px 0', padding: 12, background: '#f0f8f4', borderRadius: 8 }}>
             <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
-              Nice work! How many lbs of trash were collected? (optional)
+              Nice work. How much trash was collected? (optional)
             </label>
             <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <input
@@ -387,7 +387,7 @@ export default function EventDetail() {
             />
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={() => changeStatus('cleaned')} disabled={statusLoading}>
-                {statusLoading ? 'Saving...' : 'Confirm Cleaned'}
+                {statusLoading ? 'Saving…' : 'Mark as cleaned'}
               </button>
               <button onClick={() => { setPendingCleanedConfirm(false); setTrashLbs(''); setAfterPhotoFile(null) }}>
                 Cancel
@@ -420,7 +420,7 @@ export default function EventDetail() {
 
       <div style={{ marginTop: 24, borderTop: '1px solid #eee', paddingTop: 16 }}>
         <label style={{ fontWeight: 600, fontSize: '0.9rem', display: 'block', marginBottom: 10 }}>
-          Activity &amp; edit history
+          Updates and activity
         </label>
 
         <form onSubmit={submitNote} style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
@@ -428,15 +428,15 @@ export default function EventDetail() {
             type="text"
             value={noteText}
             onChange={e => setNoteText(e.target.value)}
-            placeholder="Add a note or update..."
+            placeholder="Share a progress update or note…"
             style={{ flex: 1, padding: 8 }}
           />
           <button type="submit" disabled={noteLoading}>
-            {noteLoading ? 'Posting...' : 'Post'}
+            {noteLoading ? 'Posting…' : 'Post update'}
           </button>
         </form>
 
-        {updates.length === 0 && <p style={{ color: '#888' }}>No activity yet.</p>}
+        {updates.length === 0 && <p style={{ color: '#888' }}>No updates yet. Be the first to share progress.</p>}
 
         {updates.map(u => (
           <div key={u.id} style={{ padding: '8px 0', borderBottom: '1px dashed #eee', fontSize: '0.85rem' }}>

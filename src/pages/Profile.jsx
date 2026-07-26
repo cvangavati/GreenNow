@@ -117,23 +117,27 @@ export default function Profile() {
       .eq('id', user.id)
 
     setSaving(false)
-    setMessage(error ? error.message : 'Profile saved!')
+    setMessage(error ? error.message : 'Your profile has been updated.')
   }
 
-  if (loading) return <p style={{ padding: 40 }}>Loading profile...</p>
+  if (loading) return <p style={{ padding: 40 }}>Loading your profile…</p>
 
   return (
     <div style={{ maxWidth: 500, margin: '40px auto', padding: '0 16px' }}>
-      <h2>Your Profile</h2>
+      <h2>Your profile</h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+        Add your details so neighbors can find you, understand your interests, and invite you to the right events.
+      </p>
       <p><Link to="/get-verified">Apply for organization verification</Link></p>
       <form onSubmit={handleSave}>
         <div>
-          <label>Name</label>
+          <label>Display name</label>
           <input value={name} onChange={e => setName(e.target.value)} required style={{ width: '100%' }} />
         </div>
         <div>
           <label>Location</label>
           <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. San Francisco, CA" style={{ width: '100%' }} />
+          <p style={{ marginTop: 4, fontSize: '0.82rem', color: '#68807b' }}>This helps people find nearby events and groups that fit your area.</p>
         </div>
         <div>
           <label>Causes you care about</label>
@@ -157,12 +161,12 @@ export default function Profile() {
               checked={leaderboardOptIn}
               onChange={e => setLeaderboardOptIn(e.target.checked)}
             />
-            {' '}Show me on the public leaderboard
+            {' '}Show my impact on the public leaderboard
           </label>
         </div>
         {message && <p>{message}</p>}
         <button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : 'Save Profile'}
+          {saving ? 'Saving…' : 'Save changes'}
         </button>
       </form>
 
@@ -174,16 +178,16 @@ export default function Profile() {
       }}>
         <div style={{ flex: '1 1 140px', background: '#f0f8f4', borderRadius: 10, padding: 14, textAlign: 'center' }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#2d9166' }}>{stats.totalEventsAttended}</div>
-          <div style={{ fontSize: '0.8rem', color: '#555' }}>Events Attended</div>
+          <div style={{ fontSize: '0.8rem', color: '#555' }}>Cleanups joined</div>
         </div>
         <div style={{ flex: '1 1 140px', background: '#f0f8f4', borderRadius: 10, padding: 14, textAlign: 'center' }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#2d9166' }}>{stats.totalTrashLbs}</div>
-          <div style={{ fontSize: '0.8rem', color: '#555' }}>Lbs Trash Collected</div>
+          <div style={{ fontSize: '0.8rem', color: '#555' }}>Trash removed</div>
         </div>
         <div style={{ flex: '1 1 140px', background: '#f0f8f4', borderRadius: 10, padding: 14, textAlign: 'center' }}>
           <div style={{ fontSize: '1.6rem', fontWeight: 700, color: '#2d9166' }}>{stats.causesCount}</div>
           <div style={{ fontSize: '0.8rem', color: '#555' }}>
-            Causes Supported{stats.causesList.length > 0 && ` (${stats.causesList.join(', ')})`}
+            Cause areas{stats.causesList.length > 0 && ` (${stats.causesList.join(', ')})`}
           </div>
         </div>
       </div>
@@ -211,8 +215,8 @@ export default function Profile() {
       )}
 
       <div style={{ marginTop: 32 }}>
-        <h3>Events You Created ({createdEvents.length})</h3>
-        {createdEvents.length === 0 && <p style={{ color: '#888' }}>You haven't posted any cleanup sites yet.</p>}
+        <h3>Cleanups you created ({createdEvents.length})</h3>
+        {createdEvents.length === 0 && <p style={{ color: '#888' }}>You haven’t posted any cleanup sites yet.</p>}
         {createdEvents.map(ev => (
           <div key={ev.id} style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
             <Link to={`/events/${ev.id}`}>{ev.title}</Link>
@@ -222,8 +226,8 @@ export default function Profile() {
       </div>
 
       <div style={{ marginTop: 24 }}>
-        <h3>Events You're Attending ({attendedEvents.length})</h3>
-        {attendedEvents.length === 0 && <p style={{ color: '#888' }}>No RSVPs yet.</p>}
+        <h3>Cleanups you joined ({attendedEvents.length})</h3>
+        {attendedEvents.length === 0 && <p style={{ color: '#888' }}>You haven’t joined any cleanups yet.</p>}
         {attendedEvents.map(ev => (
           <div key={ev.id} style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
             <Link to={`/events/${ev.id}`}>{ev.title}</Link>
@@ -233,8 +237,8 @@ export default function Profile() {
       </div>
 
       <div style={{ marginTop: 24 }}>
-        <h3>Your Posts ({myPosts.length})</h3>
-        {myPosts.length === 0 && <p style={{ color: '#888' }}>You haven't shared anything yet.</p>}
+        <h3>Your posts ({myPosts.length})</h3>
+        {myPosts.length === 0 && <p style={{ color: '#888' }}>You haven’t shared any updates yet.</p>}
         {myPosts.map(p => (
           <div key={p.id} style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
             <p style={{ margin: 0 }}>{p.content}</p>

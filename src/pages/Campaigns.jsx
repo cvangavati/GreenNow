@@ -40,18 +40,19 @@ export default function Campaigns() {
 
   return (
     <div style={{ padding: '24px 16px', maxWidth: 700, margin: '0 auto' }}>
-      <h1>Advocacy Campaigns</h1>
-      <p>
-        <Link to="/create-campaign">+ Create a Campaign</Link>
+      <h1>Community campaigns</h1>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+        Support local change by starting a campaign or reaching out to the people who can act.
       </p>
       <p>
-        <Link to="/find-reps">📞 Find Your Representatives</Link>
+        <Link to="/create-campaign">Create a campaign</Link>
       </p>
-      
-      
+      <p>
+        <Link to="/find-reps">Find your representatives</Link>
+      </p>
 
-      {loading && <p>Loading campaigns...</p>}
-      {!loading && campaigns.length === 0 && <p>No campaigns yet.</p>}
+      {loading && <p role="status">Loading campaigns…</p>}
+      {!loading && campaigns.length === 0 && <p>No campaigns have been created yet. Start the first one to bring people together.</p>}
 
       {campaigns.map(c => (
         <div key={c.id} style={{ border: '1px solid #ccc', borderRadius: 10, padding: 14, marginBottom: 14 }}>

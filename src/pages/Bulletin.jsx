@@ -44,6 +44,7 @@ export default function Bulletin() {
   const [events, setEvents] = useState([])
   const [rsvpCounts, setRsvpCounts] = useState({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [sortBy, setSortBy] = useState('date')
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
@@ -53,32 +54,45 @@ export default function Bulletin() {
     return !window.localStorage.getItem(ONBOARDING_KEY)
   })
 
-  useEffect(() => {
-    async function fetchEvents() {
-      const { data: eventsData, error: eventsError } = await supabase.from('events').select('*')
-      if (eventsError) {
-        console.error('Fetch error:', eventsError)
-        setLoading(false)
-        return
-      }
-      setEvents(eventsData)
+  async function fetchEvents() {
+    setLoading(true)
+    setError(null)
 
-      const { data: rsvpData, error: rsvpError } = await supabase
+    const [eventsResult, rsvpsResult] = await Promise.all([
+      supabase
+        .from('events')
+        .select('id,title,address,date_time,status,type,urgency,volunteers_needed,description,photos')
+        .order('date_time', { ascending: true }),
+      supabase
         .from('rsvps')
         .select('event_id')
+    ])
 
-      if (rsvpError) {
-        console.error('RSVP fetch error:', rsvpError)
-      } else {
-        const counts = {}
-        rsvpData.forEach(r => {
-          counts[r.event_id] = (counts[r.event_id] || 0) + 1
-        })
-        setRsvpCounts(counts)
-      }
-
+    const { data: eventsData, error: eventsError } = eventsResult
+    if (eventsError) {
+      console.error('Fetch error:', eventsError)
+      setError('We could not load cleanup events right now. Please try again in a moment.')
       setLoading(false)
+      return
     }
+
+    setEvents(Array.isArray(eventsData) ? eventsData : [])
+
+    const { data: rsvpData, error: rsvpError } = rsvpsResult
+    if (rsvpError) {
+      console.error('RSVP fetch error:', rsvpError)
+    } else {
+      const counts = {}
+      rsvpData.forEach(r => {
+        counts[r.event_id] = (counts[r.event_id] || 0) + 1
+      })
+      setRsvpCounts(counts)
+    }
+
+    setLoading(false)
+  }
+
+  useEffect(() => {
     fetchEvents()
   }, [])
 
@@ -88,9 +102,18 @@ export default function Bulletin() {
     .filter(ev => urgencyFilter === 'all' || ev.urgency === urgencyFilter)
 
   const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === 'date') return new Date(a.date_time) - new Date(b.date_time)
-    if (sortBy === 'status') return a.status.localeCompare(b.status)
-    if (sortBy === 'urgency') return URGENCY_RANK[a.urgency] - URGENCY_RANK[b.urgency]
+    const dateA = Date.parse(a.date_time || '')
+    const dateB = Date.parse(b.date_time || '')
+
+    if (sortBy === 'date') {
+      if (Number.isNaN(dateA) && Number.isNaN(dateB)) return 0
+      if (Number.isNaN(dateA)) return 1
+      if (Number.isNaN(dateB)) return -1
+      return dateA - dateB
+    }
+
+    if (sortBy === 'status') return (a.status || '').localeCompare(b.status || '')
+    if (sortBy === 'urgency') return (URGENCY_RANK[a.urgency] ?? 99) - (URGENCY_RANK[b.urgency] ?? 99)
     return 0
   })
 
@@ -103,52 +126,49 @@ export default function Bulletin() {
 
   return (
     <div style={{ padding: '24px 16px', maxWidth: 860, margin: '0 auto' }}>
-      <div style={{
-        border: '1px solid rgba(49, 102, 85, 0.16)',
-        borderRadius: 24,
-        padding: '20px 20px 16px',
-        marginBottom: 20,
-        background: 'linear-gradient(135deg, rgba(145, 200, 172, 0.2), rgba(92, 143, 177, 0.15))',
-        boxShadow: '0 12px 30px rgba(21, 50, 61, 0.08)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-          <div>
-            <p style={{ marginBottom: 6, fontWeight: 700, color: '#2f6b4d', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '0.75rem' }}>
-              Welcome to GreenNow
-            </p>
-            <h1 style={{ margin: '0 0 8px', fontSize: 'clamp(1.7rem, 2.5vw, 2.3rem)' }}>Your local cleanup network, in one place.</h1>
-            <p style={{ margin: 0, color: '#49655f', maxWidth: 620, lineHeight: 1.6 }}>
-              Start by joining an active cleanup, reporting a site, or posting a new event so neighbors can help faster.
-            </p>
+      <section className="hero-panel">
+        <div className="hero-panel__copy">
+          <p className="hero-panel__eyebrow">Welcome to GreenNow</p>
+          <h1>Find cleanups, share sites, and mobilize your block.</h1>
+          <p className="hero-panel__lead">
+            Browse local action, join an event, or post a new cleanup so neighbors can step in quickly.
+          </p>
+          <div className="hero-actions">
+            <Link className="action-link action-link--primary" to="/new-event">Plan a cleanup</Link>
+            <Link className="action-link action-link--secondary" to="/report-site">Report a site</Link>
           </div>
-          {showOnboarding && (
-            <button
-              type="button"
-              onClick={dismissOnboarding}
-              style={{
-                border: 'none',
-                background: 'rgba(255,255,255,0.75)',
-                padding: '8px 12px',
-                borderRadius: 999,
-                cursor: 'pointer',
-                fontWeight: 600,
-                color: '#2f6b4d'
-              }}
-            >
-              Got it
-            </button>
-          )}
         </div>
-
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 16 }}>
-          <Link to="/new-event" style={{ textDecoration: 'none', color: '#183b2c', background: 'white', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
-            + Post a cleanup
-          </Link>
-          <Link to="/report-site" style={{ textDecoration: 'none', color: '#183b2c', background: 'rgba(255,255,255,0.72)', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
-            Report a polluted site
-          </Link>
+        <div className="hero-panel__aside">
+          <div className="hero-panel__stat">
+            <strong>Weekly momentum</strong>
+            <span>Neighbors are turning overlooked places into shared care.</span>
+          </div>
+          <div className="hero-panel__stat">
+            <strong>Low-friction action</strong>
+            <span>Share a site, gather volunteers, and keep the work visible.</span>
+          </div>
         </div>
-      </div>
+        {showOnboarding && (
+          <button
+            type="button"
+            onClick={dismissOnboarding}
+            style={{
+              position: 'absolute',
+              top: '1rem',
+              right: '1rem',
+              border: 'none',
+              background: 'rgba(255,255,255,0.78)',
+              padding: '8px 12px',
+              borderRadius: 999,
+              cursor: 'pointer',
+              fontWeight: 600,
+              color: '#2f6b4d'
+            }}
+          >
+            Thanks, got it
+          </button>
+        )}
+      </section>
 
       <div className="filter-shell">
         <div className="filter-field">
@@ -188,65 +208,59 @@ export default function Bulletin() {
         </div>
       </div>
 
-      {loading && <p role="status">Loading events...</p>}
+      {error && (
+        <p className="state-banner" role="alert">
+          {error} <button type="button" className="notification-action" onClick={fetchEvents}>Try again</button>
+        </p>
+      )}
+      {loading && <p role="status" className="state-banner state-banner--info">Loading nearby cleanup events…</p>}
       {!loading && sorted.length === 0 && (
-        <div style={{
-          border: '1px dashed rgba(49, 102, 85, 0.28)',
-          borderRadius: 20,
-          padding: '22px',
-          background: 'rgba(255,255,255,0.72)',
-          color: '#49655f'
-        }}>
-          <h3 style={{ margin: '0 0 8px', color: '#234a38' }}>Nothing here yet — but your first cleanup can start now.</h3>
-          <p style={{ marginBottom: 12 }}>
-            Post a site, report an issue, or browse nearby actions to help your neighborhood take shape.
+        <div className="empty-state">
+          <h3>No cleanup events match your filters yet.</h3>
+          <p style={{ marginTop: 8 }}>
+            Try a broader search or create the first event for your area so others can join in.
           </p>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <Link to="/new-event" style={{ textDecoration: 'none', color: '#183b2c', background: 'white', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
-              Create the first event
-            </Link>
-            <Link to="/report-site" style={{ textDecoration: 'none', color: '#183b2c', background: 'rgba(255,255,255,0.82)', padding: '10px 14px', borderRadius: 999, fontWeight: 700 }}>
-              Report a site
-            </Link>
+          <div className="hero-actions" style={{ marginTop: 12 }}>
+            <Link className="action-link action-link--primary" to="/new-event">Create the first event</Link>
+            <Link className="action-link action-link--secondary" to="/report-site">Report a site</Link>
           </div>
         </div>
       )}
 
       {sorted.map(ev => (
-        <div
-          key={ev.id}
-          className="page-card"
-          style={{ padding: 14, marginBottom: 14 }}
-        >
-          <div style={{ marginBottom: 6 }}>
+        <article key={ev.id} className="event-card">
+          <div className="event-card__badges">
             <Badge label={ev.status.replace('_', ' ')} color={STATUS_COLORS[ev.status]} />
             <Badge label={ev.urgency} color={URGENCY_COLORS[ev.urgency]} />
           </div>
 
-          <h3 style={{ margin: '4px 0' }}>
-            <Link to={`/events/${ev.id}`}>{ev.title}</Link>
+          <h3 className="event-card__title">
+            <Link to={`/events/${ev.id}`}>{ev.title?.trim() || 'Untitled cleanup'}</Link>
           </h3>
 
-          <p style={{ margin: '4px 0', color: '#555' }}>{ev.description}</p>
+          <p className="event-card__description">{ev.description?.trim() || 'No description provided yet.'}</p>
 
-          <p style={{ margin: '4px 0', fontSize: '0.9rem' }}>
-            📍 {ev.address} &nbsp;·&nbsp; 📅 {new Date(ev.date_time).toLocaleString()} &nbsp;·&nbsp; {ev.type}
-          </p>
+          <div className="event-card__meta">
+            <span>📍 {ev.address?.trim() || 'Location shared soon'}</span>
+            <span>📅 {new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(ev.date_time))}</span>
+            <span>{ev.type?.trim() || 'General cleanup'}</span>
+          </div>
 
-          <p style={{ margin: '4px 0', fontSize: '0.85rem', color: '#2d9166', fontWeight: 600 }}>
-            {(rsvpCounts[ev.id] || 0)}/{ev.volunteers_needed} volunteers signed up
-          </p>
+          <div className="event-card__footer">
+            <span>{(rsvpCounts[ev.id] || 0)}/{Number(ev.volunteers_needed) || 0} volunteers signed up</span>
+            <Link to={`/events/${ev.id}`}>Open details</Link>
+          </div>
 
           {ev.photos?.[0] && (
             <img
+              className="event-card__image"
               src={ev.photos[0]}
               alt={ev.title}
               loading="lazy"
               decoding="async"
-              style={{ maxWidth: '100%', marginTop: 8, borderRadius: 8 }}
             />
           )}
-        </div>
+        </article>
       ))}
     </div>
   )

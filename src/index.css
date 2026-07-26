@@ -8,21 +8,21 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --bg: oklch(0.978 0.022 220);
-  --bg-strong: oklch(0.95 0.028 215);
-  --surface: oklch(0.996 0.01 220);
-  --surface-2: oklch(0.93 0.034 205);
-  --text: oklch(0.24 0.02 215);
-  --text-muted: oklch(0.39 0.018 210);
-  --border: oklch(0.84 0.03 210);
-  --brand: oklch(0.46 0.13 195);
-  --brand-strong: oklch(0.33 0.11 205);
-  --brand-soft: oklch(0.91 0.045 200);
-  --accent: oklch(0.77 0.13 150);
-  --accent-soft: oklch(0.93 0.05 160);
-  --shadow: 0 18px 42px rgba(24, 58, 38, 0.12);
-  --radius: 22px;
-  --radius-sm: 14px;
+  --bg: oklch(0.973 0.016 176);
+  --bg-strong: oklch(0.948 0.02 172);
+  --surface: oklch(0.995 0.008 180);
+  --surface-2: oklch(0.93 0.022 174);
+  --text: oklch(0.25 0.022 182);
+  --text-muted: oklch(0.41 0.018 176);
+  --border: oklch(0.84 0.024 172);
+  --brand: oklch(0.44 0.112 190);
+  --brand-strong: oklch(0.33 0.096 194);
+  --brand-soft: oklch(0.91 0.038 184);
+  --accent: oklch(0.7 0.118 138);
+  --accent-soft: oklch(0.94 0.046 142);
+  --shadow: 0 22px 56px rgba(15, 42, 46, 0.14);
+  --radius: 26px;
+  --radius-sm: 16px;
   --radius-pill: 999px;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -31,30 +31,11 @@
   --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-7: 2rem;
-  --font-sans: 'Segoe UI', 'Avenir Next', 'Trebuchet MS', sans-serif;
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  --font-sans: 'Inter', 'Segoe UI', 'Avenir Next', 'Trebuchet MS', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
 
   color: var(--text);
   background-color: var(--bg);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: oklch(0.16 0.025 150);
-    --bg-strong: oklch(0.2 0.028 145);
-    --surface: oklch(0.21 0.026 148);
-    --surface-2: oklch(0.24 0.03 144);
-    --text: oklch(0.95 0.01 145);
-    --text-muted: oklch(0.8 0.012 145);
-    --border: oklch(0.32 0.02 145);
-    --brand: oklch(0.72 0.12 150);
-    --brand-strong: oklch(0.77 0.12 150);
-    --brand-soft: oklch(0.26 0.046 148);
-    --accent: oklch(0.77 0.13 72);
-    --accent-soft: oklch(0.26 0.06 72);
-    --shadow: 0 20px 40px rgba(3, 12, 8, 0.45);
-  }
 }
 
 * {
@@ -63,14 +44,18 @@
 
 html {
   background: var(--bg);
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 70%, transparent), transparent 30%),
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent-soft) 74%, transparent), transparent 30%),
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--brand-soft) 82%, transparent), transparent 24%),
     linear-gradient(135deg, var(--bg) 0%, var(--bg-strong) 60%, var(--surface) 100%);
   color: var(--text);
+  background-attachment: fixed;
 }
 
 #root {
@@ -93,22 +78,29 @@ button {
   cursor: pointer;
 }
 
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
   color: var(--text);
   letter-spacing: -0.02em;
-  line-height: 1.05;
+  line-height: 1.02;
+  font-weight: 600;
 }
 
 h1 {
-  font-size: clamp(2rem, 2.8vw + 1rem, 3rem);
+  font-size: clamp(2.1rem, 3vw + 1rem, 3.15rem);
   margin: 0 0 0.75rem;
 }
 
 h2 {
-  font-size: clamp(1.4rem, 1.15vw + 1rem, 1.8rem);
+  font-size: clamp(1.45rem, 1.2vw + 1rem, 1.9rem);
   margin: 0 0 0.5rem;
 }
 
@@ -120,17 +112,20 @@ input,
 select,
 textarea {
   width: 100%;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
   border-radius: var(--radius-sm);
-  padding: 0.8rem 0.95rem;
-  background: var(--surface);
+  padding: 0.82rem 0.95rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), color-mix(in srgb, var(--brand-soft) 20%, rgba(255, 255, 255, 0.92)));
   color: var(--text);
+  box-shadow: inset 0 1px 2px rgba(15, 42, 46, 0.03);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid color-mix(in srgb, var(--brand) 28%, transparent);
-  outline-offset: 2px;
+  outline: none;
   border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 16%, transparent);
+  transform: translateY(-1px);
 }

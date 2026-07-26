@@ -40,11 +40,14 @@ export default function Groups() {
 
   return (
     <div style={{ padding: '24px 16px', maxWidth: 700, margin: '0 auto' }}>
-      <h1>Groups</h1>
-      <p><Link to="/create-group">+ Create a Group</Link></p>
+      <h1>Community groups</h1>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+        Join a local group to coordinate efforts, share updates, and stay connected with neighbors.
+      </p>
+      <p><Link to="/create-group">Create a group</Link></p>
 
-      {loading && <p>Loading groups...</p>}
-      {!loading && groups.length === 0 && <p>No groups yet. Be the first to create one!</p>}
+      {loading && <p role="status">Loading groups…</p>}
+      {!loading && groups.length === 0 && <p>No groups have been created yet. Start the first one for your area.</p>}
 
       {groups.map(g => (
         <div key={g.id} style={{ border: '1px solid #ccc', borderRadius: 10, padding: 14, marginBottom: 14 }}>

@@ -8,6 +8,8 @@ export default function NotificationBell() {
   const navigate = useNavigate()
   const [notifications, setNotifications] = useState([])
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!user) {
@@ -37,21 +39,40 @@ export default function NotificationBell() {
   async function fetchNotifications() {
     if (!user) return
 
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20)
+    setLoading(true)
+    setError(null)
 
-    setNotifications(data || [])
+    try {
+      const { data, error: notificationsError } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+
+      if (notificationsError) {
+        throw notificationsError
+      }
+
+      setNotifications(data || [])
+    } catch (notificationsError) {
+      console.error('Notification fetch failed:', notificationsError)
+      setError('We could not refresh notifications. Please try again.')
+      setNotifications([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   const unreadCount = notifications.filter(n => !n.is_read).length
 
   async function handleClick(n) {
     if (!n.is_read) {
-      await supabase.from('notifications').update({ is_read: true }).eq('id', n.id)
+      try {
+        await supabase.from('notifications').update({ is_read: true }).eq('id', n.id)
+      } catch (notificationsError) {
+        console.error('Could not mark notification as read:', notificationsError)
+      }
       fetchNotifications()
     }
     setOpen(false)
@@ -60,8 +81,13 @@ export default function NotificationBell() {
 
   async function markAllRead() {
     if (!user) return
-    await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id).eq('is_read', false)
-    fetchNotifications()
+    try {
+      await supabase.from('notifications').update({ is_read: true }).eq('user_id', user.id).eq('is_read', false)
+      fetchNotifications()
+    } catch (notificationsError) {
+      console.error('Could not mark notifications as read:', notificationsError)
+      setError('We could not mark everything as read. Please try again.')
+    }
   }
 
   return (
@@ -88,11 +114,13 @@ export default function NotificationBell() {
           <div className="notification-panel__header">
             <strong>Notifications</strong>
             <button type="button" className="notification-action" onClick={markAllRead}>
-              Mark all read
+              Mark all as read
             </button>
           </div>
-          {notifications.length === 0 && (
-            <p className="notification-empty">No notifications yet.</p>
+          {error && <p className="state-banner state-banner--info">{error}</p>}
+          {loading && !error && <p className="notification-empty">Refreshing notifications…</p>}
+          {!loading && notifications.length === 0 && !error && (
+            <p className="notification-empty">You’re all caught up.</p>
           )}
           {notifications.map(n => (
             <button
@@ -102,8 +130,8 @@ export default function NotificationBell() {
               role="menuitem"
               onClick={() => handleClick(n)}
             >
-              <span>{n.message}</span>
-              <span className="notification-item__meta">{new Date(n.created_at).toLocaleString()}</span>
+              <span>{n.message?.trim() || 'Notification received'}</span>
+              <span className="notification-item__meta">{new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(n.created_at))}</span>
             </button>
           ))}
         </div>

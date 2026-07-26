@@ -12,7 +12,7 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="site-nav">
+    <nav className="site-nav" aria-label="Primary navigation">
       <Link to="/" className="site-nav__brand">
         <span className="site-nav__brand-mark">✦</span>
         <span>GreenNow</span>
@@ -45,17 +45,17 @@ export default function NavBar() {
               Leaderboard
             </NavLink>
             <NotificationBell />
-            <button className="site-nav__button" onClick={handleSignOut}>
-              Log Out
+            <button className="site-nav__button" type="button" onClick={handleSignOut}>
+              Sign out
             </button>
           </>
         ) : (
           <>
             <NavLink to="/login" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
-              Log In
+              Sign in
             </NavLink>
             <NavLink to="/signup" className={({ isActive }) => `site-nav__link${isActive ? ' site-nav__link--active' : ''}`}>
-              Sign Up
+              Create account
             </NavLink>
           </>
         )}
