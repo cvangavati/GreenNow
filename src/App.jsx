@@ -18,6 +18,9 @@ import Leaderboard from './pages/Leaderboard'
 import ReportSite from './pages/ReportSite'
 import MapView from './pages/MapView'
 import Gallery from './pages/Gallery'
+import CreateCampaign from './pages/CreateCampaign'
+import Campaigns from './pages/Campaigns'
+import CampaignDetail from './pages/CampaignDetail'
 
 function AppLayout() {
   return (
@@ -63,6 +66,15 @@ function AppLayout() {
         } />
         <Route path="/gallery" element={
           <ProtectedRoute><Gallery /></ProtectedRoute>
+        } />
+        <Route path="/create-campaign" element={
+          <ProtectedRoute><CreateCampaign /></ProtectedRoute>
+        } />
+        <Route path="/campaigns" element={
+          <ProtectedRoute><Campaigns /></ProtectedRoute>
+        } />
+        <Route path="/campaigns/:id" element={
+          <ProtectedRoute><CampaignDetail /></ProtectedRoute>
         } />
       </Routes>
     </>
