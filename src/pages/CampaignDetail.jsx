@@ -149,6 +149,9 @@ export default function CampaignDetail() {
         >
           <button type="button">📘 Share on Facebook</button>
         </a>
+        <p>
+          <Link to={`/campaigns/${id}/contact-rep`}>📨 Contact Your Representative</Link>
+        </p>
       </div>
 
       {!hasSigned ? (

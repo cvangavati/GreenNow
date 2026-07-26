@@ -47,9 +47,7 @@ export default function Campaigns() {
       <p>
         <Link to="/find-reps">📞 Find Your Representatives</Link>
       </p>
-      <p>
-        <Link to={`/campaigns/${id}/contact-rep`}>📨 Contact Your Representative</Link>
-      </p>
+      
       
 
       {loading && <p>Loading campaigns...</p>}
