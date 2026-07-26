@@ -14,37 +14,38 @@
   top: 0.8rem;
   z-index: 20;
   max-width: 1280px;
-  margin: 0 auto 1rem;
-  padding: 0.95rem 1.15rem;
+  margin: 0 auto 1.25rem;
+  padding: 1.15rem 1.35rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.1rem;
   border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-soft) 70%, var(--surface)) 0%, color-mix(in srgb, var(--accent-soft) 85%, var(--surface)) 100%);
+  box-shadow: 0 22px 50px rgba(27, 72, 45, 0.18);
+  backdrop-filter: blur(14px);
 }
 
 .site-nav__brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  color: var(--text);
+  gap: 0.7rem;
+  color: var(--brand-strong);
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
 .site-nav__brand-mark {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-soft), var(--accent-soft));
-  color: var(--brand-strong);
+  background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+  color: white;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--brand) 32%, transparent);
 }
 
 .site-nav__links {
@@ -61,13 +62,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 46px;
   border: 0;
   border-radius: 999px;
-  padding: 0.6rem 0.9rem;
-  color: var(--text-muted);
+  padding: 0.7rem 1rem;
+  color: var(--text);
   background: transparent;
-  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .site-nav__link:hover,
