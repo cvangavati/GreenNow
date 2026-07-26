@@ -23,7 +23,7 @@ export default function USRepLookup() {
 
     try {
       const res = await fetch(
-        'https://cdn.jsdelivr.net/gh/unitedstates/congress-legislators@main/legislators-current.json'
+        'https://unitedstates.github.io/congress-legislators/legislators-current.json'
       )
       const all = await res.json()
 
