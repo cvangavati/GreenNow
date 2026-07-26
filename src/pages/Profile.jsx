@@ -143,7 +143,7 @@ export default function Profile() {
           <label>Causes you care about</label>
           <div style={{ display: 'grid', gap: '0.55rem', marginTop: '0.4rem' }}>
             {CAUSE_OPTIONS.map(tag => (
-              <label key={tag} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', cursor: 'pointer' }}>
+              <label key={tag} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'flex-start', gap: '0.55rem', cursor: 'pointer', width: 'fit-content' }}>
                 <input
                   type="checkbox"
                   checked={causeTags.includes(tag)}
