@@ -141,27 +141,27 @@ export default function Profile() {
         </div>
         <div>
           <label>Causes you care about</label>
-          <div>
+          <div style={{ display: 'grid', gap: '0.55rem', marginTop: '0.4rem' }}>
             {CAUSE_OPTIONS.map(tag => (
-              <label key={tag} style={{ display: 'block' }}>
+              <label key={tag} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
                   checked={causeTags.includes(tag)}
                   onChange={() => toggleTag(tag)}
                 />
-                {' '}{tag}
+                <span>{tag}</span>
               </label>
             ))}
           </div>
         </div>
         <div style={{ marginTop: 10 }}>
-          <label>
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', cursor: 'pointer' }}>
             <input
               type="checkbox"
               checked={leaderboardOptIn}
               onChange={e => setLeaderboardOptIn(e.target.checked)}
             />
-            {' '}Show my impact on the public leaderboard
+            <span>Show my impact on the public leaderboard</span>
           </label>
         </div>
         {message && <p>{message}</p>}
