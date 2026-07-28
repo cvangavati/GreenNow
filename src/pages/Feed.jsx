@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
+import FlagButton from '../components/FlagButton'
 
 const POST_TYPES = ['update', 'milestone', 'advocacy', 'urgent', 'news', 'personal']
 const TYPE_COLORS = {
@@ -128,6 +129,7 @@ function PostCard({ post, currentUserId }) {
         </button>
         <button onClick={() => setShowComments(!showComments)}>
           💬 {comments.length} Comment{comments.length !== 1 ? 's' : ''}
+          <FlagButton contentType="post" contentId={post.id} />
         </button>
       </div>
 

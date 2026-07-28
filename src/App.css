@@ -687,3 +687,56 @@
     padding-inline: 0.8rem;
   }
 }
+.flag-shell {
+  display: inline-block;
+}
+
+.flag-trigger {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  padding: 0;
+}
+
+.flag-trigger:hover {
+  color: #b23a3a;
+}
+
+.flag-form {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.flag-form input {
+  font-size: 0.8rem;
+  padding: 0.5rem 0.7rem;
+  min-height: 2.2rem;
+}
+
+.flag-submit,
+.flag-cancel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 0.45rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  color: var(--brand-strong);
+}
+
+.flag-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.flag-confirm {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--brand-strong);
+}

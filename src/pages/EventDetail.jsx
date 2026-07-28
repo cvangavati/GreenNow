@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
+import FlagButton from '../components/FlagButton'
+
 
 const STATUS_OPTIONS = ['reported', 'planned', 'in_progress', 'cleaned']
 const STATUS_LABELS = {
@@ -267,6 +269,7 @@ export default function EventDetail() {
       </div>
 
       <h1 style={{ marginBottom: 4 }}>{event.title}</h1>
+      <FlagButton contentType="event" contentId={event.id} />
       <p style={{ color: '#555' }}>{event.description}</p>
 
       <p style={{ fontSize: '0.95rem' }}>

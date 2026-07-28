@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
+import FlagButton from '../components/FlagButton'
 
 export default function CampaignDetail() {
   const { id } = useParams()
@@ -103,7 +104,8 @@ export default function CampaignDetail() {
   return (
     <div style={{ maxWidth: 600, margin: '40px auto', padding: '0 16px' }}>
       <p><Link to="/campaigns">&larr; Back to Campaigns</Link></p>
-
+      
+      <FlagButton contentType="campaign" contentId={campaign.id} />
       <h1>{campaign.title}</h1>
       <p style={{ color: '#555' }}>{campaign.description}</p>
 
