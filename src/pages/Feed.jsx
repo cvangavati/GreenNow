@@ -129,8 +129,8 @@ function PostCard({ post, currentUserId }) {
         </button>
         <button onClick={() => setShowComments(!showComments)}>
           💬 {comments.length} Comment{comments.length !== 1 ? 's' : ''}
-          <FlagButton contentType="post" contentId={post.id} />
         </button>
+        <FlagButton contentType="post" contentId={post.id} />
       </div>
 
       {showComments && (
