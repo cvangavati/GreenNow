@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import NavBar from './components/NavBar'
 import ProtectedRoute from './components/ProtectedRoute'
+import Moderation from './pages/Moderation'
 
 const Bulletin = lazy(() => import('./pages/Bulletin'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
@@ -101,6 +102,9 @@ function AppLayout() {
             } />
             <Route path="/campaigns/:id/contact-rep" element={
               <ProtectedRoute><ContactRep /></ProtectedRoute>
+            } />
+            <Route path="/moderation" element={
+              <ProtectedRoute><Moderation /></ProtectedRoute>
             } />
           </Routes>
         </Suspense>

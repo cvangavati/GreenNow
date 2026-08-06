@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useRateLimit } from '../hooks/useRateLimit'
 
 const TYPE_OPTIONS = ['ocean', 'beach', 'river', 'forest', 'urban', 'roadside']
 const URGENCY_OPTIONS = ['low', 'medium', 'high', 'critical']
@@ -11,6 +12,7 @@ const URGENCY_OPTIONS = ['low', 'medium', 'high', 'critical']
 export default function NewEvent() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { attempt } = useRateLimit(4000)
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -95,6 +97,11 @@ export default function NewEvent() {
 
     if (!title.trim() || !address.trim() || !dateTime) {
       setError('Please fill in title, address, and date/time.')
+      return
+    }
+
+    if (!attempt()) {
+      setError('Please wait a few seconds before submitting again.')
       return
     }
 

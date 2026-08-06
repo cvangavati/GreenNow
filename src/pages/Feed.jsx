@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
 import FlagButton from '../components/FlagButton'
+import { useRateLimit } from '../hooks/useRateLimit'
 
 const POST_TYPES = ['update', 'milestone', 'advocacy', 'urgent', 'news', 'personal']
 const TYPE_COLORS = {
@@ -38,6 +39,8 @@ function PostCard({ post, currentUserId }) {
   const [commentText, setCommentText] = useState('')
   const [showComments, setShowComments] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [commentError, setCommentError] = useState(null)
+  const { attempt: attemptComment } = useRateLimit(3000)
 
   useEffect(() => {
     fetchExtras()
@@ -81,6 +84,13 @@ function PostCard({ post, currentUserId }) {
   async function submitComment(e) {
     e.preventDefault()
     if (!commentText.trim()) return
+
+    if (!attemptComment()) {
+      setCommentError('Please wait a few seconds before commenting again.')
+      return
+    }
+    setCommentError(null)
+
     setLoading(true)
     await supabase
       .from('post_comments')
@@ -150,6 +160,7 @@ function PostCard({ post, currentUserId }) {
             />
             <button type="submit" disabled={loading}>Post</button>
           </form>
+          {commentError && <p style={{ color: 'red', fontSize: '0.8rem', marginTop: 4 }}>{commentError}</p>}
         </div>
       )}
     </div>
@@ -169,6 +180,7 @@ export default function Feed() {
   const [groupId, setGroupId] = useState('')
   const [posting, setPosting] = useState(false)
   const [error, setError] = useState(null)
+  const { attempt } = useRateLimit(4000)
 
   useEffect(() => {
     fetchPosts()
@@ -204,6 +216,12 @@ export default function Feed() {
   async function handlePost(e) {
     e.preventDefault()
     if (!content.trim()) return
+
+    if (!attempt()) {
+      setError('Please wait a few seconds before posting again.')
+      return
+    }
+
     setPosting(true)
     setError(null)
 

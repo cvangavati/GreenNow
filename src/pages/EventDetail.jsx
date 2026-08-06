@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
 import FlagButton from '../components/FlagButton'
-
+import { useRateLimit } from '../hooks/useRateLimit'
 
 const STATUS_OPTIONS = ['reported', 'planned', 'in_progress', 'cleaned']
 const STATUS_LABELS = {
@@ -14,13 +14,13 @@ const STATUS_LABELS = {
 }
 const STATUS_COLORS = {
   reported: '#c14848',
-  planned: '#d98c2b',
+  planned: '#96600d',
   in_progress: '#3b5fc4',
   cleaned: '#2d9166'
 }
 const URGENCY_COLORS = {
   critical: '#c14848',
-  high: '#d98c2b',
+  high: '#96600d',
   medium: '#3b5fc4',
   low: '#6b7a72'
 }
@@ -62,6 +62,10 @@ export default function EventDetail() {
   const [adoptDateTime, setAdoptDateTime] = useState('')
   const [adoptVolunteers, setAdoptVolunteers] = useState(5)
   const [error, setError] = useState(null)
+
+  const { attempt: attemptStatus } = useRateLimit(2500)
+  const { attempt: attemptNote } = useRateLimit(3000)
+  const { attempt: attemptAdopt } = useRateLimit(3000)
 
   useEffect(() => {
     fetchData()
@@ -130,6 +134,12 @@ export default function EventDetail() {
       setError('Please pick a date/time to schedule this cleanup.')
       return
     }
+
+    if (!attemptAdopt()) {
+      setError('Please wait a few seconds before trying again.')
+      return
+    }
+
     setStatusLoading(true)
     setError(null)
 
@@ -168,6 +178,11 @@ export default function EventDetail() {
 
     if (newStatus === 'cleaned' && !pendingCleanedConfirm) {
       setPendingCleanedConfirm(true)
+      return
+    }
+
+    if (!attemptStatus()) {
+      setError('Please wait a few seconds before changing status again.')
       return
     }
 
@@ -236,6 +251,12 @@ export default function EventDetail() {
   async function submitNote(e) {
     e.preventDefault()
     if (!noteText.trim()) return
+
+    if (!attemptNote()) {
+      setError('Please wait a few seconds before posting another update.')
+      return
+    }
+
     setNoteLoading(true)
     setError(null)
 

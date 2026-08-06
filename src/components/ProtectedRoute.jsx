@@ -1,20 +1,46 @@
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../services/supabaseClient'
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
+  const [banned, setBanned] = useState(false)
+  const [checkingBan, setCheckingBan] = useState(true)
 
-  if (loading) {
+  useEffect(() => {
+    async function checkBan() {
+      if (!user) {
+        setCheckingBan(false)
+        return
+      }
+      const { data } = await supabase
+        .from('profiles')
+        .select('banned')
+        .eq('id', user.id)
+        .single()
+      setBanned(data?.banned || false)
+      setCheckingBan(false)
+    }
+    checkBan()
+  }, [user])
+
+  if (loading || checkingBan) return <p className="page-shell">Loading...</p>
+  if (!user) return <Navigate to="/login" replace />
+
+  if (banned) {
     return (
-      <div className="auth-shell">
-        <div className="auth-card" role="status" aria-live="polite">
-          <h2>Preparing your workspace</h2>
-          <p className="form-help-text">Just a moment while we get everything ready.</p>
+      <div className="page-shell">
+        <div className="page-card">
+          <h2>Account Suspended</h2>
+          <p>
+            Your account has been suspended due to a violation of community guidelines.
+            If you believe this is a mistake, please contact the GreenNow team.
+          </p>
         </div>
       </div>
     )
   }
 
-  if (!user) return <Navigate to="/login" replace />
   return children
 }

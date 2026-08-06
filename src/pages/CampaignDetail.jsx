@@ -3,10 +3,12 @@ import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
 import FlagButton from '../components/FlagButton'
+import { useRateLimit } from '../hooks/useRateLimit'
 
 export default function CampaignDetail() {
   const { id } = useParams()
   const { user } = useAuth()
+  const { attempt } = useRateLimit(3000)
 
   const [campaign, setCampaign] = useState(null)
   const [signatures, setSignatures] = useState([])
@@ -45,7 +47,6 @@ export default function CampaignDetail() {
     setSignatures(sigData || [])
     setLoading(false)
 
-    // Update page title and OG meta tags for link previews when shared
     if (campaignData) {
       document.title = `${campaignData.title} — GreenNow Campaign`
       setMetaTag('property', 'og:title', campaignData.title)
@@ -79,6 +80,12 @@ export default function CampaignDetail() {
   async function handleSign(e) {
     e.preventDefault()
     if (hasSigned) return
+
+    if (!attempt()) {
+      setError('Please wait a few seconds before trying again.')
+      return
+    }
+
     setSigning(true)
     setError(null)
 
