@@ -39,7 +39,7 @@ export default function Gallery() {
         <p style={{ color: '#888' }}>No completed cleanups with photos are available yet. Check back soon for progress updates.</p>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+      <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
         {events.map(ev => (
           <div key={ev.id} style={{ border: '1px solid #ccc', borderRadius: 10, padding: 14 }}>
             <h3 style={{ margin: '0 0 8px' }}>
@@ -49,14 +49,14 @@ export default function Gallery() {
               📍 {ev.address}
               {ev.trash_collected_lbs && <> &nbsp;·&nbsp; ♻️ {ev.trash_collected_lbs} lbs collected</>}
             </p>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="before-after-pair">
               {ev.photos?.[0] && (
-                <div style={{ flex: 1 }}>
+                <div>
                   <p style={{ fontSize: '0.75rem', fontWeight: 600, margin: '0 0 4px' }}>Before</p>
                   <img src={ev.photos[0]} alt="Before" style={{ width: '100%', borderRadius: 6 }} />
                 </div>
               )}
-              <div style={{ flex: 1 }}>
+              <div>
                 <p style={{ fontSize: '0.75rem', fontWeight: 600, margin: '0 0 4px' }}>After</p>
                 <img src={ev.after_photo_url} alt="After" style={{ width: '100%', borderRadius: 6 }} />
               </div>

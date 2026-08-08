@@ -332,7 +332,7 @@ export default function EventDetail() {
                   onChange={e => setAdoptVolunteers(e.target.value)}
                 />
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div className="action-row" style={{ display: 'flex', gap: 8 }}>
                 <button type="submit" disabled={statusLoading}>
                   {statusLoading ? 'Scheduling…' : 'Confirm schedule'}
                 </button>
@@ -364,7 +364,7 @@ export default function EventDetail() {
         <label style={{ fontWeight: 600, fontSize: '0.9rem', display: 'block', marginBottom: 6 }}>
           Update the cleanup status
         </label>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        <div className="action-row" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {STATUS_OPTIONS.map(s => (
             <button
               key={s}
@@ -427,7 +427,7 @@ export default function EventDetail() {
         )}
 
         {event.status === 'cleaned' && event.after_photo_url && (
-          <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+          <div className="before-after-pair" style={{ marginTop: 12 }}>
             {event.photos?.[0] && (
               <div style={{ flex: '1 1 200px' }}>
                 <p style={{ fontSize: '0.8rem', fontWeight: 600, margin: '0 0 4px' }}>Before</p>

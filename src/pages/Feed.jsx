@@ -133,7 +133,7 @@ function PostCard({ post, currentUserId }) {
         />
       )}
 
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 10 }}>
+      <div className="action-row" style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 10 }}>
         <button onClick={toggleLike} disabled={loading}>
           {liked ? '💚 Liked' : '🤍 Like'} ({likeCount})
         </button>
@@ -307,7 +307,7 @@ export default function Feed() {
           rows={3}
           style={{ width: '100%', marginBottom: 8 }}
         />
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="composer-controls" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <select value={type} onChange={e => setType(e.target.value)}>
             {POST_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
