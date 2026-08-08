@@ -14,7 +14,9 @@ export default function NavBar() {
   return (
     <nav className="site-nav" aria-label="Primary navigation">
       <Link to="/" className="site-nav__brand">
-        <span className="site-nav__brand-mark">✦</span>
+        <span className="site-nav__brand-mark">
+          <img src="/favicon.svg" alt="" width="20" height="20" aria-hidden="true" />
+        </span>
         <span>GreenNow</span>
       </Link>
       <div className="site-nav__links">

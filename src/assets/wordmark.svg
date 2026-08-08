@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 60">
+  <defs>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d7d72"/>
+      <stop offset="100%" stop-color="#7fb069"/>
+    </linearGradient>
+  </defs>
+  <circle cx="26" cy="30" r="22" fill="url(#g2)"/>
+  <path d="M26 42
+           C17 42 12 35 12 27
+           C12 21 17 16 23 16
+           C23 23 26 26 33 26
+           C33 35 29 42 26 42
+           Z"
+        fill="white" opacity="0.95"/>
+  <text x="58" y="38" font-family="Georgia, 'Iowan Old Style', serif" font-size="26" font-weight="600" fill="#1a2620">GreenNow</text>
+</svg>

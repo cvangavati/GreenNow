@@ -53,13 +53,9 @@
   width: 2.7rem;
   height: 2.7rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
-  color: white;
-  box-shadow: 0 12px 28px color-mix(in srgb, var(--brand) 30%, transparent);
   animation: mark-pulse 2.6s ease-in-out infinite;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 .site-nav__brand-mark::before {
