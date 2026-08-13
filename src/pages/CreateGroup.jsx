@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
+import { useRateLimit } from '../hooks/useRateLimit'
 
 export default function CreateGroup() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { attempt } = useRateLimit(3000)
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -20,6 +22,12 @@ export default function CreateGroup() {
       setError('Please add a group name before continuing.')
       return
     }
+
+    if (!attempt()) {
+      setError('Please wait a few seconds before trying again.')
+      return
+    }
+
     setSaving(true)
     setError(null)
 
@@ -48,48 +56,65 @@ export default function CreateGroup() {
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: '40px auto', padding: '0 16px' }}>
-      <h2>Start a neighborhood group</h2>
-      <p style={{ color: '#5b6f69', marginBottom: '1rem' }}>
-        Create a group to organize local action around a shared cause and keep people connected.
-      </p>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Group name</label>
-          <input value={name} onChange={e => setName(e.target.value)} required style={{ width: '100%' }} />
-        </div>
-        <div>
-          <label>What is this group for?</label>
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={3}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <label>Area or region</label>
-          <input
-            value={region}
-            onChange={e => setRegion(e.target.value)}
-            placeholder="e.g. Bay Area, CA"
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div>
-          <label>Cause focus</label>
-          <input
-            value={causeFocus}
-            onChange={e => setCauseFocus(e.target.value)}
-            placeholder="e.g. beach cleanup, river restoration"
-            style={{ width: '100%' }}
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit" disabled={saving}>
-          {saving ? 'Creating…' : 'Create group'}
-        </button>
-      </form>
+    <div className="auth-shell">
+      <div className="auth-card">
+        <h2>Start a neighborhood group</h2>
+        <p className="form-help-text">
+          Create a group to organize local action around a shared cause and keep people connected.
+        </p>
+        <form className="auth-form" onSubmit={handleSubmit} noValidate>
+          <div className="form-field">
+            <label htmlFor="group-name">Group name</label>
+            <input
+              id="group-name"
+              name="name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? 'group-error' : undefined}
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="group-description">What is this group for?</label>
+            <textarea
+              id="group-description"
+              name="description"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              rows={3}
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="group-region">Area or region</label>
+            <input
+              id="group-region"
+              name="region"
+              value={region}
+              onChange={e => setRegion(e.target.value)}
+              placeholder="e.g. Bay Area, CA"
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="group-cause">Cause focus</label>
+            <input
+              id="group-cause"
+              name="causeFocus"
+              value={causeFocus}
+              onChange={e => setCauseFocus(e.target.value)}
+              placeholder="e.g. beach cleanup, river restoration"
+            />
+          </div>
+          {error && (
+            <p id="group-error" className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button className="form-submit" type="submit" disabled={saving}>
+            {saving ? 'Creating…' : 'Create group'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

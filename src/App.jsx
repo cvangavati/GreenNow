@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import NavBar from './components/NavBar'
 import ProtectedRoute from './components/ProtectedRoute'
 import Moderation from './pages/Moderation'
+import Analytics from './pages/Analytics'
 
 const Bulletin = lazy(() => import('./pages/Bulletin'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
@@ -105,6 +106,9 @@ function AppLayout() {
             } />
             <Route path="/moderation" element={
               <ProtectedRoute><Moderation /></ProtectedRoute>
+            } />
+            <Route path="/analytics" element={
+              <ProtectedRoute><Analytics /></ProtectedRoute>
             } />
           </Routes>
         </Suspense>
