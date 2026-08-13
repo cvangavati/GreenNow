@@ -1,10 +1,12 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import { supabase } from './services/supabaseClient'
 import NavBar from './components/NavBar'
 import ProtectedRoute from './components/ProtectedRoute'
 import Moderation from './pages/Moderation'
 import Analytics from './pages/Analytics'
+import Onboarding from './components/Onboarding'
 
 const Bulletin = lazy(() => import('./pages/Bulletin'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
@@ -40,6 +42,25 @@ function RouteFallback() {
 }
 
 function AppLayout() {
+  const { user } = useAuth()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+
+  useEffect(() => {
+    async function checkOnboarded() {
+      if (!user) {
+        setShowOnboarding(false)
+        return
+      }
+      const { data } = await supabase
+        .from('profiles')
+        .select('onboarded')
+        .eq('id', user.id)
+        .single()
+      setShowOnboarding(data?.onboarded === false)
+    }
+    checkOnboarded()
+  }, [user])
+
   return (
     <div className="app-shell">
       <NavBar />
@@ -113,6 +134,10 @@ function AppLayout() {
           </Routes>
         </Suspense>
       </main>
+
+      {showOnboarding && (
+        <Onboarding onComplete={() => setShowOnboarding(false)} />
+      )}
     </div>
   )
 }
