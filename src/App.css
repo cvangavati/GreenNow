@@ -819,23 +819,25 @@
   word-break: break-word;
 }
 
+/* --- Larger nav bar + logo (v2, bigger) --- */
+
 .site-nav {
-  padding: 1.3rem 1.5rem;
+  padding: 1.4rem 1.6rem;
 }
 
 .site-nav__brand {
-  font-size: clamp(1.3rem, 1.1rem + 0.7vw, 1.55rem);
+  font-size: clamp(1.4rem, 1.15rem + 0.9vw, 1.7rem);
   gap: var(--space-4);
 }
 
 .site-nav__brand-mark {
-  width: 3.6rem;
-  height: 3.6rem;
+  width: 4.6rem;
+  height: 4.6rem;
 }
 
 .site-nav__brand-mark img {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
 }
 
 .site-nav__link,
@@ -850,11 +852,11 @@
     padding: 1.1rem 1.1rem;
   }
   .site-nav__brand-mark {
-    width: 3rem;
-    height: 3rem;
+    width: 3.6rem;
+    height: 3.6rem;
   }
   .site-nav__brand-mark img {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
   }
 }
