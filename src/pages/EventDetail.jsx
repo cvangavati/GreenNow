@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
 import FlagButton from '../components/FlagButton'
 import { useRateLimit } from '../hooks/useRateLimit'
+import { validateImageFile } from '../utils/security'
 
 const STATUS_OPTIONS = ['reported', 'planned', 'in_progress', 'cleaned']
 const STATUS_LABELS = {
@@ -173,6 +174,18 @@ export default function EventDetail() {
     setStatusLoading(false)
   }
 
+  function handleAfterPhotoChange(file) {
+    const fileError = validateImageFile(file)
+    if (fileError) {
+      setAfterPhotoFile(null)
+      setError(fileError)
+      return
+    }
+
+    setError(null)
+    setAfterPhotoFile(file || null)
+  }
+
   async function changeStatus(newStatus) {
     if (newStatus === event.status) return
 
@@ -296,6 +309,17 @@ export default function EventDetail() {
       <p style={{ fontSize: '0.95rem' }}>
         📍 {event.address} &nbsp;·&nbsp; 📅 {event.date_time ? new Date(event.date_time).toLocaleString() : 'Not yet scheduled'} &nbsp;·&nbsp; {event.type}
       </p>
+      {event.lat != null && event.lng != null && (
+        <p style={{ marginTop: 8 }}>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${event.lat},${event.lng}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get directions
+          </a>
+        </p>
+      )}
 
       {event.photos?.[0] && (
         <img
@@ -394,6 +418,7 @@ export default function EventDetail() {
                 type="number"
                 min="0"
                 step="0.1"
+                max="100000"
                 value={trashLbs}
                 onChange={e => setTrashLbs(e.target.value)}
                 placeholder="e.g. 40"
@@ -405,8 +430,8 @@ export default function EventDetail() {
             </label>
             <input
               type="file"
-              accept="image/*"
-              onChange={e => setAfterPhotoFile(e.target.files[0])}
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={e => handleAfterPhotoChange(e.target.files[0])}
               style={{ marginBottom: 8 }}
             />
             <div style={{ display: 'flex', gap: 8 }}>
@@ -431,12 +456,12 @@ export default function EventDetail() {
             {event.photos?.[0] && (
               <div style={{ flex: '1 1 200px' }}>
                 <p style={{ fontSize: '0.8rem', fontWeight: 600, margin: '0 0 4px' }}>Before</p>
-                <img src={event.photos[0]} alt="Before" style={{ width: '100%', borderRadius: 8 }} />
+                <img src={event.photos[0]} alt={`Before cleanup: ${event.title}`} style={{ width: '100%', borderRadius: 8 }} />
               </div>
             )}
             <div style={{ flex: '1 1 200px' }}>
               <p style={{ fontSize: '0.8rem', fontWeight: 600, margin: '0 0 4px' }}>After</p>
-              <img src={event.after_photo_url} alt="After" style={{ width: '100%', borderRadius: 8 }} />
+              <img src={event.after_photo_url} alt={`After cleanup: ${event.title}`} style={{ width: '100%', borderRadius: 8 }} />
             </div>
           </div>
         )}
@@ -452,6 +477,7 @@ export default function EventDetail() {
             type="text"
             value={noteText}
             onChange={e => setNoteText(e.target.value)}
+            maxLength={2000}
             placeholder="Share a progress update or note…"
             style={{ flex: 1, padding: 8 }}
           />

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../services/supabaseClient'
+import { escapeMapText, safeEventId } from '../utils/security'
 
 const STATUS_COLORS = {
   reported: '#c14848',
@@ -96,8 +97,9 @@ export default function MapView() {
         weight: 2
       }).addTo(markerLayerRef.current)
 
+      const destination = encodeURIComponent(`${ev.lat},${ev.lng}`)
       marker.bindPopup(
-        `<strong>${ev.title}</strong><br>${ev.address}<br>Status: ${ev.status}<br><a href="/events/${ev.id}">View details</a>`
+        `<strong>${escapeMapText(ev.title, 'Cleanup site')}</strong><br>${escapeMapText(ev.address, 'Location not provided')}<br>Status: ${escapeMapText(ev.status, 'unknown')}<br><a href="/events/${safeEventId(ev.id)}">View details</a> · <a href="https://www.google.com/maps/dir/?api=1&destination=${destination}" target="_blank" rel="noopener noreferrer">Directions</a>`
       )
     })
   }, [mapReady, events, showUnclaimedOnly])

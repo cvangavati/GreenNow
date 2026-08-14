@@ -67,12 +67,26 @@ export default function Landing() {
         </div>
       </section>
 
+      <section className="page-card" style={{ marginTop: '1.5rem' }}>
+        <h2>See how the community is taking action</h2>
+        <p className="form-help-text" style={{ marginBottom: '1rem' }}>
+          Browse cleanup results shared through GreenNow, or read answers about reporting, organizing, and advocacy before you join.
+        </p>
+        <div className="hero-actions">
+          <Link to="/impact" className="action-link action-link--secondary">View community impact</Link>
+          <Link to="/faq" className="action-link action-link--secondary">Read the FAQ</Link>
+        </div>
+      </section>
+
       <section className="page-card" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
         <h2>Ready to get started?</h2>
         <p className="form-help-text" style={{ marginBottom: '1rem' }}>
-          It takes less than a minute to create an account and see what's happening near you.
+          Create an account to see what is happening near you and participate in GreenNow’s cleanup community.
         </p>
-        <Link to="/signup" className="action-link action-link--primary">Create your account</Link>
+        <div className="hero-actions" style={{ justifyContent: 'center' }}>
+          <Link to="/signup" className="action-link action-link--primary">Create your account</Link>
+          <Link to="/privacy" className="action-link action-link--secondary">Privacy policy</Link>
+        </div>
       </section>
     </div>
   )

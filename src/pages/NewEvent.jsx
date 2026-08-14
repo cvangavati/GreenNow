@@ -5,6 +5,7 @@ import { supabase } from '../services/supabaseClient'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useRateLimit } from '../hooks/useRateLimit'
+import { validateImageFile } from '../utils/security'
 
 const TYPE_OPTIONS = ['ocean', 'beach', 'river', 'forest', 'urban', 'roadside']
 const URGENCY_OPTIONS = ['low', 'medium', 'high', 'critical']
@@ -91,6 +92,18 @@ export default function NewEvent() {
     }, 800)
   }
 
+  function handlePhotoChange(file) {
+    const fileError = validateImageFile(file)
+    if (fileError) {
+      setPhotoFile(null)
+      setError(fileError)
+      return
+    }
+
+    setError(null)
+    setPhotoFile(file || null)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
@@ -173,7 +186,7 @@ export default function NewEvent() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Title</label>
-          <input value={title} onChange={e => setTitle(e.target.value)} required />
+          <input value={title} onChange={e => setTitle(e.target.value)} required maxLength={120} />
         </div>
 
         <div>
@@ -182,6 +195,7 @@ export default function NewEvent() {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={4}
+            maxLength={3000}
             style={{ width: '100%' }}
           />
         </div>
@@ -193,6 +207,7 @@ export default function NewEvent() {
             onChange={e => handleAddressChange(e.target.value)}
             placeholder="e.g. Ocean Beach, San Francisco, CA"
             required
+            maxLength={200}
           />
         </div>
 
@@ -246,8 +261,8 @@ export default function NewEvent() {
           <label>Photo (optional)</label>
           <input
             type="file"
-            accept="image/*"
-            onChange={e => setPhotoFile(e.target.files[0])}
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={e => handlePhotoChange(e.target.files[0])}
           />
         </div>
 

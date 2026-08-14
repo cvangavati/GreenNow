@@ -14,7 +14,7 @@ export default function Gallery() {
     setLoading(true)
     const { data, error } = await supabase
       .from('events')
-      .select('*')
+      .select('id,title,address,photos,after_photo_url,trash_collected_lbs,updated_at')
       .eq('status', 'cleaned')
       .not('after_photo_url', 'is', null)
       .order('updated_at', { ascending: false })
@@ -53,12 +53,12 @@ export default function Gallery() {
               {ev.photos?.[0] && (
                 <div>
                   <p style={{ fontSize: '0.75rem', fontWeight: 600, margin: '0 0 4px' }}>Before</p>
-                  <img src={ev.photos[0]} alt="Before" style={{ width: '100%', borderRadius: 6 }} />
+                  <img src={ev.photos[0]} alt={`Before cleanup: ${ev.title}`} style={{ width: '100%', borderRadius: 6 }} />
                 </div>
               )}
               <div>
                 <p style={{ fontSize: '0.75rem', fontWeight: 600, margin: '0 0 4px' }}>After</p>
-                <img src={ev.after_photo_url} alt="After" style={{ width: '100%', borderRadius: 6 }} />
+                <img src={ev.after_photo_url} alt={`After cleanup: ${ev.title}`} style={{ width: '100%', borderRadius: 6 }} />
               </div>
             </div>
           </div>

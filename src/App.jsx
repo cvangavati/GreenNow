@@ -4,6 +4,10 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { supabase } from './services/supabaseClient'
 import NavBar from './components/NavBar'
 import ProtectedRoute from './components/ProtectedRoute'
+import PageMeta from './components/PageMeta'
+import Breadcrumbs from './components/Breadcrumbs'
+import SiteFooter from './components/SiteFooter'
+import MobileCTA from './components/MobileCTA'
 import Moderation from './pages/Moderation'
 import Analytics from './pages/Analytics'
 import Onboarding from './components/Onboarding'
@@ -31,6 +35,11 @@ const CampaignDetail = lazy(() => import('./pages/CampaignDetail'))
 const GetVerified = lazy(() => import('./pages/GetVerified'))
 const USRepLookup = lazy(() => import('./pages/USRepLookup'))
 const ContactRep = lazy(() => import('./pages/ContactRep'))
+const FAQ = lazy(() => import('./pages/FAQ'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Impact = lazy(() => import('./pages/Impact'))
+const ThankYou = lazy(() => import('./pages/ThankYou'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 function RouteFallback() {
   return (
@@ -64,7 +73,9 @@ function AppLayout() {
 
   return (
     <div className="app-shell">
+      <PageMeta />
       <NavBar />
+      <Breadcrumbs />
       <main className="page-shell">
         <Suspense fallback={<RouteFallback />}>
           <Routes>
@@ -73,6 +84,10 @@ function AppLayout() {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/impact" element={<Impact />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             <Route
               path="/"
               element={
@@ -142,9 +157,12 @@ function AppLayout() {
             <Route path="/analytics" element={
               <ProtectedRoute><Analytics /></ProtectedRoute>
             } />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </main>
+      <SiteFooter />
+      <MobileCTA />
 
       {showOnboarding && (
         <Onboarding onComplete={() => setShowOnboarding(false)} />

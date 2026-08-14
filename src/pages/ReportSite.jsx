@@ -5,6 +5,7 @@ import { supabase } from '../services/supabaseClient'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useRateLimit } from '../hooks/useRateLimit'
+import { validateImageFile } from '../utils/security'
 
 const TYPE_OPTIONS = ['ocean', 'beach', 'river', 'forest', 'urban', 'roadside']
 const URGENCY_OPTIONS = ['low', 'medium', 'high', 'critical']
@@ -83,6 +84,18 @@ export default function ReportSite() {
       }
       setGeocoding(false)
     }, 800)
+  }
+
+  function handlePhotoChange(file) {
+    const fileError = validateImageFile(file)
+    if (fileError) {
+      setPhotoFile(null)
+      setError(fileError)
+      return
+    }
+
+    setError(null)
+    setPhotoFile(file || null)
   }
 
   async function handleSubmit(e) {
@@ -196,6 +209,7 @@ export default function ReportSite() {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
+            maxLength={2000}
             style={{ width: '100%' }}
           />
         </div>
@@ -218,8 +232,8 @@ export default function ReportSite() {
           <label>Photo (optional but helpful)</label>
           <input
             type="file"
-            accept="image/*"
-            onChange={e => setPhotoFile(e.target.files[0])}
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={e => handlePhotoChange(e.target.files[0])}
           />
         </div>
 

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/supabaseClient'
 import FlagButton from '../components/FlagButton'
 import { useRateLimit } from '../hooks/useRateLimit'
+import { validateImageFile } from '../utils/security'
 
 const POST_TYPES = ['update', 'milestone', 'advocacy', 'urgent', 'news', 'personal']
 const TYPE_COLORS = {
@@ -128,7 +129,7 @@ function PostCard({ post, currentUserId }) {
       {post.photos?.[0] && (
         <img
           src={post.photos[0]}
-          alt="Post attachment"
+          alt={post.content ? `Image attached to post: ${post.content.slice(0, 120)}` : 'Image attached to a community post'}
           style={{ maxWidth: '100%', borderRadius: 8, margin: '8px 0' }}
         />
       )}
@@ -211,6 +212,18 @@ export default function Feed() {
     if (error) console.error('Fetch error:', error)
     else setPosts(data)
     setLoading(false)
+  }
+
+  function handlePhotoChange(file) {
+    const fileError = validateImageFile(file)
+    if (fileError) {
+      setPhotoFile(null)
+      setError(fileError)
+      return
+    }
+
+    setError(null)
+    setPhotoFile(file || null)
   }
 
   async function handlePost(e) {
@@ -305,6 +318,7 @@ export default function Feed() {
           onChange={e => setContent(e.target.value)}
           placeholder="Share an update, milestone, or something on your mind..."
           rows={3}
+          maxLength={2000}
           style={{ width: '100%', marginBottom: 8 }}
         />
         <div className="composer-controls" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -313,8 +327,8 @@ export default function Feed() {
           </select>
           <input
             type="file"
-            accept="image/*"
-            onChange={e => setPhotoFile(e.target.files[0])}
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={e => handlePhotoChange(e.target.files[0])}
           />
           <select value={linkedEventId} onChange={e => setLinkedEventId(e.target.value)}>
             <option value="">Not linked to an event</option>
