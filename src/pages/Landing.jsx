@@ -36,14 +36,12 @@ export default function Landing() {
       <section className="page-card" style={{ marginTop: '1.5rem' }}>
         <h2>Our mission</h2>
         <p style={{ lineHeight: 1.7, color: 'var(--text-muted)' }}>
-          Our objective is to clean up polluted sites everywhere — from local beaches and rivers to
-          neighborhood streets — starting in the United States and expanding to communities worldwide.
+          Our objective is to clean up polluted sites everywhere; from local beaches and rivers to
+          neighborhood streets, starting in the United States and expanding to communities worldwide.
           Rather than relying on one large volunteer effort, GreenNow connects people already making change
-          with people who want to get involved, the same way citizen-reporting platforms like India's
-          Swachhata-MoHUA app connect residents directly to cleanup action. As our community grows, we aim
-          to build enough collective voice to push governments and corporations toward real reform in
-          dumping regulations and corporate waste practices — because the most effective cleanup is the one
-          that never has to happen twice.
+          with people who want to get involved. As our community grows, we aim to build enough collective 
+          voice to push governments and corporations toward real reform in dumping regulations and corporate 
+          waste practices because the most effective cleanup is the one that never has to happen twice.
         </p>
       </section>
 
