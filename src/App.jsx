@@ -1,5 +1,5 @@
 import { Suspense, lazy, useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { supabase } from './services/supabaseClient'
 import NavBar from './components/NavBar'
@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Moderation from './pages/Moderation'
 import Analytics from './pages/Analytics'
 import Onboarding from './components/Onboarding'
+import Landing from './pages/Landing'
 
 const Bulletin = lazy(() => import('./pages/Bulletin'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
@@ -42,7 +43,7 @@ function RouteFallback() {
 }
 
 function AppLayout() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [showOnboarding, setShowOnboarding] = useState(false)
 
   useEffect(() => {
@@ -67,13 +68,23 @@ function AppLayout() {
       <main className="page-shell">
         <Suspense fallback={<RouteFallback />}>
           <Routes>
+            <Route path="/welcome" element={<Landing />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/" element={
-              <ProtectedRoute><Bulletin /></ProtectedRoute>
-            } />
+            <Route
+              path="/"
+              element={
+                loading ? (
+                  <RouteFallback />
+                ) : user ? (
+                  <ProtectedRoute><Bulletin /></ProtectedRoute>
+                ) : (
+                  <Navigate to="/welcome" replace />
+                )
+              }
+            />
             <Route path="/events/:id" element={
               <ProtectedRoute><EventDetail /></ProtectedRoute>
             } />
