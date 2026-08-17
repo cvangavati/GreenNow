@@ -139,11 +139,12 @@ export default function Profile() {
           <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. San Francisco, CA" style={{ width: '100%' }} />
           <p style={{ marginTop: 4, fontSize: '0.82rem', color: '#68807b' }}>This helps people find nearby events and groups that fit your area.</p>
         </div>
-        <div>
-          <label>Causes you care about</label>
-          <div style={{ display: 'grid', gap: '0.55rem', marginTop: '0.4rem' }}>
+        <fieldset className="checklist-field">
+          <legend>Causes you care about</legend>
+          <p className="checklist-field__help">Choose the environmental causes you want to see more of in GreenNow.</p>
+          <div className="checklist-options">
             {CAUSE_OPTIONS.map(tag => (
-              <label key={tag} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'flex-start', gap: '0.55rem', cursor: 'pointer', width: 'fit-content' }}>
+              <label key={tag} className="checklist-option">
                 <input
                   type="checkbox"
                   checked={causeTags.includes(tag)}
@@ -153,9 +154,11 @@ export default function Profile() {
               </label>
             ))}
           </div>
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', cursor: 'pointer' }}>
+        </fieldset>
+        <fieldset className="checklist-field">
+          <legend>Leaderboard visibility</legend>
+          <p className="checklist-field__help">Choose whether your impact totals can appear on the public community leaderboard.</p>
+          <label className="checklist-option">
             <input
               type="checkbox"
               checked={leaderboardOptIn}
@@ -163,7 +166,7 @@ export default function Profile() {
             />
             <span>Show my impact on the public leaderboard</span>
           </label>
-        </div>
+        </fieldset>
         {message && <p>{message}</p>}
         <button type="submit" disabled={saving}>
           {saving ? 'Saving…' : 'Save changes'}

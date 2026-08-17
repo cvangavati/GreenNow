@@ -107,14 +107,17 @@ export default function MapView() {
   return (
     <div style={{ padding: '24px 16px', maxWidth: 900, margin: '0 auto' }}>
       <h1>Map View</h1>
-      <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', marginBottom: 12, cursor: 'pointer' }}>
-        <input
-          type="checkbox"
-          checked={showUnclaimedOnly}
-          onChange={e => setShowUnclaimedOnly(e.target.checked)}
-        />
-        <span>Show only unclaimed reports</span>
-      </label>
+      <fieldset className="checklist-field map-filter-field">
+        <legend>Map filters</legend>
+        <label className="checklist-option">
+          <input
+            type="checkbox"
+            checked={showUnclaimedOnly}
+            onChange={e => setShowUnclaimedOnly(e.target.checked)}
+          />
+          <span>Show only unclaimed reports</span>
+        </label>
+      </fieldset>
 
       {loading && <p>Loading map data…</p>}
       {mapError && <p className="form-error" role="alert">{mapError}</p>}
