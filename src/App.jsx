@@ -77,7 +77,7 @@ function AppLayout() {
       <PageMeta />
       <NavBar />
       <Breadcrumbs />
-      <main className="page-shell">
+      <main className="page-shell app-content">
         <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/welcome" element={<Landing />} />
