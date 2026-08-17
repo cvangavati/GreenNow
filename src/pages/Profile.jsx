@@ -10,6 +10,8 @@ export default function Profile() {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [causeTags, setCauseTags] = useState([])
+  const [leaderboardOptIn, setLeaderboardOptIn] = useState(false)
+  const [initialLeaderboardOptIn, setInitialLeaderboardOptIn] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
@@ -37,6 +39,9 @@ export default function Profile() {
       setName(profileData.name || '')
       setLocation(profileData.location_text || '')
       setCauseTags(profileData.cause_tags || [])
+      const optedIn = Boolean(profileData.leaderboard_opt_in)
+      setLeaderboardOptIn(optedIn)
+      setInitialLeaderboardOptIn(optedIn)
     }
 
     const { data: created } = await supabase
@@ -109,13 +114,34 @@ export default function Profile() {
     e.preventDefault()
     setSaving(true)
     setMessage(null)
-    const { error } = await supabase
+    const { error: profileError } = await supabase
       .from('profiles')
       .update({ name, location_text: location, cause_tags: causeTags })
       .eq('id', user.id)
 
+    if (profileError) {
+      setSaving(false)
+      setMessage(profileError.message)
+      return
+    }
+
+    if (leaderboardOptIn !== initialLeaderboardOptIn) {
+      const { error: leaderboardError } = await supabase
+        .from('profiles')
+        .update({ leaderboard_opt_in: leaderboardOptIn })
+        .eq('id', user.id)
+
+      if (leaderboardError) {
+        setSaving(false)
+        setMessage('Your profile was saved, but the leaderboard preference is not configured yet. Please ask an administrator to apply the leaderboard setup.')
+        return
+      }
+
+      setInitialLeaderboardOptIn(leaderboardOptIn)
+    }
+
     setSaving(false)
-    setMessage(error ? error.message : 'Your profile has been updated.')
+    setMessage('Your profile has been updated.')
   }
 
   if (loading) return <p style={{ padding: 40 }}>Loading your profile…</p>
@@ -152,6 +178,18 @@ export default function Profile() {
               </label>
             ))}
           </div>
+        </fieldset>
+        <fieldset className="checklist-field">
+          <legend>Leaderboard visibility</legend>
+          <p className="checklist-field__help">Opt in to share your display name and aggregate cleanup impact on the authenticated community leaderboard.</p>
+          <label className="checklist-option">
+            <input
+              type="checkbox"
+              checked={leaderboardOptIn}
+              onChange={e => setLeaderboardOptIn(e.target.checked)}
+            />
+            <span>Show my impact on the community leaderboard</span>
+          </label>
         </fieldset>
         {message && <p>{message}</p>}
         <button type="submit" disabled={saving}>
