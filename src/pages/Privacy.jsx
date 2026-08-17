@@ -6,13 +6,13 @@ export default function Privacy() {
       <p className="public-page__eyebrow">Effective August 14, 2026</p>
       <h1 id="privacy-title">GreenNow privacy policy</h1>
       <p className="public-page__lead">
-        This policy explains the information GreenNow processes when you use the community reporting, cleanup, group, campaign, and profile features.
+        This policy explains the information GreenNow processes when you use the community reporting, cleanup, group, campaign, profile, and feedback features.
       </p>
 
       <section>
         <h2>Information you provide</h2>
         <p>
-          GreenNow processes the information you submit when creating an account, editing a profile, reporting a site, creating or joining a cleanup, posting in the community feed, creating or signing a campaign, requesting organization verification, or contacting an elected representative through the app. Depending on the feature, this may include your name, email address, location, interests, event and post content, photo uploads, and campaign comments.
+          GreenNow processes the information you submit when creating an account, editing a profile, reporting a site, creating or joining a cleanup, posting in the community feed, creating or signing a campaign, requesting organization verification, contacting an elected representative through the app, or submitting feedback. Depending on the feature, this may include your name, email address, location, interests, event and post content, photo uploads, campaign comments, feedback category, and feedback message.
         </p>
       </section>
 
@@ -26,7 +26,7 @@ export default function Privacy() {
       <section>
         <h2>How GreenNow uses information</h2>
         <p>
-          GreenNow uses submitted information to operate the features you select, including authentication, profiles, cleanup planning, RSVPs, progress updates, groups, community posts, notifications, campaigns, moderation, and impact summaries. The application also uses location lookup and map services to support mapping features.
+          GreenNow uses submitted information to operate the features you select, including authentication, profiles, cleanup planning, RSVPs, progress updates, groups, community posts, notifications, campaigns, moderation, feedback review, and impact summaries. The application also uses location lookup and map services to support mapping features.
         </p>
       </section>
 

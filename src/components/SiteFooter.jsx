@@ -11,6 +11,7 @@ export default function SiteFooter() {
         <Link to="/welcome">How it works</Link>
         <Link to="/impact">Community impact</Link>
         <Link to="/faq">FAQ</Link>
+        <Link to="/feedback">How can we improve?</Link>
         <Link to="/privacy">Privacy</Link>
       </nav>
     </footer>

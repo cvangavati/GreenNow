@@ -11,6 +11,7 @@ const ROUTE_METADATA = [
   { match: path => path === '/forgot-password', title: 'Reset Password', description: 'Request a secure GreenNow password reset link.' },
   { match: path => path === '/reset-password', title: 'Set a New Password', description: 'Set a new password for your GreenNow account.' },
   { match: path => path === '/faq', title: 'Frequently Asked Questions', description: 'Learn how GreenNow reports sites, organizes cleanups, shares progress, and supports advocacy.' },
+  { match: path => path === '/feedback', title: 'How Can We Improve?', description: 'Share feedback, accessibility suggestions, feature ideas, or safety concerns to help improve GreenNow.' },
   { match: path => path === '/privacy', title: 'Privacy Policy', description: 'Read the GreenNow privacy policy and how account, location, event, and media information is handled.' },
   { match: path => path === '/impact', title: 'Community Impact', description: 'Explore verified cleanup results and before-and-after progress shared by the GreenNow community.' },
   { match: path => path === '/thank-you', title: 'Thank You', description: 'Thank you for taking action with GreenNow.' },

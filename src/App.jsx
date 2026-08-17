@@ -36,6 +36,7 @@ const GetVerified = lazy(() => import('./pages/GetVerified'))
 const USRepLookup = lazy(() => import('./pages/USRepLookup'))
 const ContactRep = lazy(() => import('./pages/ContactRep'))
 const FAQ = lazy(() => import('./pages/FAQ'))
+const Feedback = lazy(() => import('./pages/Feedback'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const Impact = lazy(() => import('./pages/Impact'))
 const ThankYou = lazy(() => import('./pages/ThankYou'))
@@ -85,6 +86,7 @@ function AppLayout() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/feedback" element={<Feedback />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/impact" element={<Impact />} />
             <Route path="/thank-you" element={<ThankYou />} />

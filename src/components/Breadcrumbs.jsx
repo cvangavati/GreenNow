@@ -7,6 +7,7 @@ const LABELS = {
   'forgot-password': 'Reset password',
   'reset-password': 'Set password',
   faq: 'FAQ',
+  feedback: 'How can we improve?',
   privacy: 'Privacy',
   impact: 'Impact',
   'thank-you': 'Thank you',

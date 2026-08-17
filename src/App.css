@@ -1103,3 +1103,130 @@
     font-weight: 800;
   }
 }
+
+.feedback-page {
+  max-width: 720px;
+}
+
+.feedback-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.4rem;
+}
+
+.feedback-form .form-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.feedback-form label {
+  color: var(--text);
+  font-weight: 750;
+}
+
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 0.9rem;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--text);
+  font: inherit;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.feedback-form textarea {
+  resize: vertical;
+  min-height: 10rem;
+  line-height: 1.55;
+}
+
+.feedback-form input:focus,
+.feedback-form select:focus,
+.feedback-form textarea:focus {
+  border-color: var(--brand);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-soft) 78%, transparent);
+}
+
+.form-helper,
+.optional-label {
+  color: var(--text-muted);
+  font-size: 0.87rem;
+  font-weight: 500;
+}
+
+.form-helper {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.consent-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--text-muted) !important;
+  font-size: 0.94rem;
+  font-weight: 500 !important;
+  line-height: 1.5;
+}
+
+.consent-check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.2rem;
+  accent-color: var(--brand);
+}
+
+.consent-check a {
+  color: var(--brand-strong);
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+}
+
+.form-status {
+  margin: 0;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 0.95rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.form-status--success {
+  border: 1px solid color-mix(in srgb, var(--brand) 28%, transparent);
+  background: color-mix(in srgb, var(--brand-soft) 70%, transparent);
+  color: var(--brand-strong);
+}
+
+.form-status--error {
+  border: 1px solid color-mix(in srgb, #c14848 24%, transparent);
+  background: color-mix(in srgb, #c14848 10%, transparent);
+  color: #982f2f;
+}
+
+.feedback-form .btn-primary {
+  justify-self: start;
+  min-height: 2.9rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 0.8rem 1.1rem;
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  color: white;
+  font: inherit;
+  font-weight: 800;
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--brand) 24%, transparent);
+}
+
+.feedback-form .btn-primary:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .feedback-form .btn-primary {
+    width: 100%;
+  }
+}
