@@ -10,7 +10,6 @@ export default function Profile() {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [causeTags, setCauseTags] = useState([])
-  const [leaderboardOptIn, setLeaderboardOptIn] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
@@ -38,7 +37,6 @@ export default function Profile() {
       setName(profileData.name || '')
       setLocation(profileData.location_text || '')
       setCauseTags(profileData.cause_tags || [])
-      setLeaderboardOptIn(profileData.leaderboard_opt_in || false)
     }
 
     const { data: created } = await supabase
@@ -113,7 +111,7 @@ export default function Profile() {
     setMessage(null)
     const { error } = await supabase
       .from('profiles')
-      .update({ name, location_text: location, cause_tags: causeTags, leaderboard_opt_in: leaderboardOptIn })
+      .update({ name, location_text: location, cause_tags: causeTags })
       .eq('id', user.id)
 
     setSaving(false)
@@ -154,18 +152,6 @@ export default function Profile() {
               </label>
             ))}
           </div>
-        </fieldset>
-        <fieldset className="checklist-field">
-          <legend>Leaderboard visibility</legend>
-          <p className="checklist-field__help">Choose whether your impact totals can appear on the public community leaderboard.</p>
-          <label className="checklist-option">
-            <input
-              type="checkbox"
-              checked={leaderboardOptIn}
-              onChange={e => setLeaderboardOptIn(e.target.checked)}
-            />
-            <span>Show my impact on the public leaderboard</span>
-          </label>
         </fieldset>
         {message && <p>{message}</p>}
         <button type="submit" disabled={saving}>

@@ -1501,10 +1501,17 @@
 .feedback-form input[type="checkbox"],
 .consent-check input[type="checkbox"] {
   appearance: none;
-  flex: 0 0 auto;
-  width: 1.18rem;
-  height: 1.18rem;
-  min-height: 1.18rem;
+  display: inline-grid;
+  place-content: center;
+  flex: 0 0 1.18rem;
+  inline-size: 1.18rem !important;
+  block-size: 1.18rem !important;
+  width: 1.18rem !important;
+  height: 1.18rem !important;
+  min-width: 1.18rem !important;
+  max-width: 1.18rem !important;
+  min-height: 1.18rem !important;
+  max-height: 1.18rem !important;
   margin: 0;
   padding: 0;
   border: 1.5px solid color-mix(in srgb, var(--brand) 38%, var(--border));
