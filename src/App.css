@@ -1308,7 +1308,7 @@
   box-shadow: var(--focus-ring);
 }
 
-.app-content button:not(.flag-trigger):not(.notification-action),
+.app-content button:not(.flag-trigger):not(.notification-action):not(.form-submit):not(.btn-primary):not(.action-link):not([type="submit"]),
 .app-content .site-nav__button {
   min-height: 2.7rem;
   border: 1px solid var(--border-soft);
@@ -1323,24 +1323,49 @@
   transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 
-.app-content button:not(.flag-trigger):not(.notification-action):hover:not(:disabled) {
+.app-content button:not(.flag-trigger):not(.notification-action):not(.form-submit):not(.btn-primary):not(.action-link):not([type="submit"]):hover:not(:disabled) {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--brand) 36%, var(--border));
   box-shadow: var(--shadow-sm);
 }
 
-.app-content button:not(.flag-trigger):not(.notification-action):focus-visible {
+.app-content button:not(.flag-trigger):not(.notification-action):not(.form-submit):not(.btn-primary):not(.action-link):not([type="submit"]):focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
 .app-content form button[type="submit"],
-.app-content .form-submit,
-.app-content .btn-primary {
-  border-color: transparent;
+.app-content button.form-submit,
+.app-content button.btn-primary,
+.app-content button.action-link--primary {
+  min-height: 2.7rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 0.65rem 1rem;
   background: linear-gradient(135deg, var(--brand), var(--accent));
   color: white;
+  font: inherit;
+  font-weight: 800;
+  line-height: 1.2;
   box-shadow: 0 12px 24px color-mix(in srgb, var(--brand) 25%, transparent);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.app-content form button[type="submit"]:hover:not(:disabled),
+.app-content button.form-submit:hover:not(:disabled),
+.app-content button.btn-primary:hover:not(:disabled),
+.app-content button.action-link--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: saturate(1.06) brightness(1.02);
+  box-shadow: 0 15px 28px color-mix(in srgb, var(--brand) 30%, transparent);
+}
+
+.app-content form button[type="submit"]:focus-visible,
+.app-content button.form-submit:focus-visible,
+.app-content button.btn-primary:focus-visible,
+.app-content button.action-link--primary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), 0 12px 24px color-mix(in srgb, var(--brand) 25%, transparent);
 }
 
 .app-content button:disabled {
