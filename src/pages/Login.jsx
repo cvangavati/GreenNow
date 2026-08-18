@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useRateLimit } from '../hooks/useRateLimit'
-import { useFormGuard } from '../hooks/useFormGuard'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -12,7 +11,6 @@ export default function Login() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { attempt, blocked } = useRateLimit(3000)
-  const { website, setWebsite, validateSubmission } = useFormGuard()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -21,12 +19,6 @@ export default function Login() {
 
     if (!trimmedEmail || !password) {
       setError('Please enter both your email and password.')
-      return
-    }
-
-    const guardError = validateSubmission()
-    if (guardError) {
-      setError(guardError)
       return
     }
 
@@ -52,18 +44,6 @@ export default function Login() {
         <h2>Sign in to GreenNow</h2>
         <p className="form-help-text">Use the email and password you created for your account.</p>
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
-          <div className="honeypot-field" aria-hidden="true">
-            <label htmlFor="login-website">Website</label>
-            <input
-              id="login-website"
-              name="website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              value={website}
-              onChange={e => setWebsite(e.target.value)}
-            />
-          </div>
           <div className="form-field">
             <label htmlFor="login-email">Email</label>
             <input

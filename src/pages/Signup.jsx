@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useRateLimit } from '../hooks/useRateLimit'
-import { useFormGuard } from '../hooks/useFormGuard'
 
 export default function Signup() {
   const [name, setName] = useState('')
@@ -13,7 +12,6 @@ export default function Signup() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
   const { attempt, blocked } = useRateLimit(3000)
-  const { website, setWebsite, validateSubmission } = useFormGuard()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -24,12 +22,6 @@ export default function Signup() {
 
     if (!trimmedName || !trimmedEmail || !password) {
       setError('Please fill in your name, email, and password before continuing.')
-      return
-    }
-
-    const guardError = validateSubmission()
-    if (guardError) {
-      setError(guardError)
       return
     }
 
@@ -57,18 +49,6 @@ export default function Signup() {
         <h2>Create your GreenNow account</h2>
         <p className="form-help-text">Join to plan cleanups, share local issues, and connect with nearby volunteers.</p>
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
-          <div className="honeypot-field" aria-hidden="true">
-            <label htmlFor="signup-website">Website</label>
-            <input
-              id="signup-website"
-              name="website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              value={website}
-              onChange={e => setWebsite(e.target.value)}
-            />
-          </div>
           <div className="form-field">
             <label htmlFor="signup-name">Name</label>
             <input
